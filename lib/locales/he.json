@@ -1,0 +1,29 @@
+{
+  "app.name": "Walker",
+  "app.tagline": "תורנות טיפול בחיות — הוגן לכל המשפחה",
+
+  "nav.today": "היום",
+  "nav.week": "שבוע",
+  "nav.stats": "סטטיסטיקה",
+  "nav.settings": "הגדרות",
+
+  "common.save": "שמירה",
+  "common.cancel": "ביטול",
+  "common.next": "המשך",
+  "common.back": "חזרה",
+  "common.done": "סיום",
+  "common.add": "הוספה",
+  "common.remove": "הסרה",
+  "common.edit": "עריכה",
+  "common.delete": "מחיקה",
+  "common.close": "סגירה",
+  "common.undo": "ביטול",
+  "common.today": "היום",
+  "common.loading": "טוען…",
+
+  "landing.cta.start": "צרו משפחה חדשה",
+  "landing.cta.join": "הצטרפו למשפחה קיימת",
+  "landing.pitch": "מעקב משותף אחרי טיולים, האכלות וכל שאר המשימות — עם חלוקה הוגנת, תזכורות, וסטטיסטיקה לכל בני המשפחה.",
+
+  "locale.switch": "English"
+}

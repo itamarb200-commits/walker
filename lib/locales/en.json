@@ -1,0 +1,29 @@
+{
+  "app.name": "Walker",
+  "app.tagline": "Pet-care duty, fair for the whole family",
+
+  "nav.today": "Today",
+  "nav.week": "Week",
+  "nav.stats": "Statistics",
+  "nav.settings": "Settings",
+
+  "common.save": "Save",
+  "common.cancel": "Cancel",
+  "common.next": "Next",
+  "common.back": "Back",
+  "common.done": "Done",
+  "common.add": "Add",
+  "common.remove": "Remove",
+  "common.edit": "Edit",
+  "common.delete": "Delete",
+  "common.close": "Close",
+  "common.undo": "Undo",
+  "common.today": "Today",
+  "common.loading": "Loading…",
+
+  "landing.cta.start": "Create a family",
+  "landing.cta.join": "Join an existing family",
+  "landing.pitch": "Shared tracking for walks, feedings and every other pet chore — with fair rotation, reminders, and stats for the whole family.",
+
+  "locale.switch": "עברית"
+}
