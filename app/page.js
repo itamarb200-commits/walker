@@ -46,24 +46,16 @@ export default function Landing() {
         <p className="text-body text-ink2">{t("landing.pitch")}</p>
       </motion.div>
 
-      {/* CTAs — wired to onboarding in Phase 1 */}
-      <motion.div {...entrance(0.12)} className="flex w-full flex-col gap-2.5">
-        <button
-          onClick={() => toast(t("common.loading"))}
+      {/* CTAs — route to auth (choice made in onboarding wizard) */}
+      <motion.div {...entrance(0.12)} className="flex w-full">
+        <a
+          href="/auth"
           className="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-btn bg-accent text-body font-bold text-accent-fg shadow-card cursor-pointer
                      transition-transform duration-150 ease-out active:scale-[0.97]"
         >
           <PawPrint size={20} aria-hidden="true" />
           {t("landing.cta.start")}
-        </button>
-        <button
-          onClick={() => toast(t("common.loading"))}
-          className="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-btn bg-surface text-body font-semibold text-ink shadow-card cursor-pointer
-                     transition-transform duration-150 ease-out active:scale-[0.97]"
-        >
-          <Users size={20} aria-hidden="true" />
-          {t("landing.cta.join")}
-        </button>
+        </a>
       </motion.div>
     </div>
   );
