@@ -12,6 +12,8 @@ import { useI18n } from "@/lib/i18n";
 import { getMyContext } from "@/lib/family";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import TodayBoard from "@/components/TodayBoard";
+import WeekBoard from "@/components/WeekBoard";
+import StatsBoard from "@/components/StatsBoard";
 
 const TABS = [
   { key: "today", labelKey: "nav.today", Icon: null },
@@ -57,18 +59,8 @@ export default function AppHome() {
     <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-24">
       <main className="flex-1 px-5 pt-8">
         {tab === "today" && <TodayBoard ctx={ctx} />}
-        {tab === "week" && (
-          <div className="flex flex-col items-center gap-2 pt-24 text-center">
-            <CalendarDays size={32} className="text-ink2" />
-            <p className="text-body text-ink2">לוח השבוע בקרוב</p>
-          </div>
-        )}
-        {tab === "stats" && (
-          <div className="flex flex-col items-center gap-2 pt-24 text-center">
-            <BarChart3 size={32} className="text-ink2" />
-            <p className="text-body text-ink2">סטטיסטיקה בקרוב</p>
-          </div>
-        )}
+        {tab === "week" && <WeekBoard ctx={ctx} />}
+        {tab === "stats" && <StatsBoard ctx={ctx} />}
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md items-center justify-around border-t border-line bg-surface/95 px-4 pb-safe-b pt-2 backdrop-blur-md">
