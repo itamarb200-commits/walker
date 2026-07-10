@@ -11,10 +11,12 @@ import { toast } from "sonner";
 import { fetchFamilyBoard, recommendPerson, toggleLog } from "@/lib/family";
 import { TaskIcon } from "@/lib/task-icons";
 import { personBg, personBgSoft, personBorder, personText } from "@/lib/person-colors";
+import { useI18n } from "@/lib/i18n";
 
 const CARD_TINTS = ["bg-c-blue", "bg-c-mint", "bg-c-peach", "bg-c-purple", "bg-c-pink", "bg-c-yellow"];
 
 export default function TodayBoard({ ctx }) {
+  const { t } = useI18n();
   const [board, setBoard] = useState(null);
   const [pending, setPending] = useState(null); // `${taskId}:${slotTime}` while a tap is in flight
 
@@ -51,7 +53,7 @@ export default function TodayBoard({ ctx }) {
   if (board.tasks.length === 0) {
     return (
       <div className="flex flex-col items-center gap-2 pt-24 text-center">
-        <p className="text-body text-ink2">עדיין אין משימות מוגדרות</p>
+        <p className="text-body text-ink2">{t("today.empty")}</p>
       </div>
     );
   }
@@ -60,7 +62,7 @@ export default function TodayBoard({ ctx }) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-h1">היום</h1>
+      <h1 className="text-h1">{t("today.title")}</h1>
       {board.tasks.map((task, idx) => {
         const tint = CARD_TINTS[idx % CARD_TINTS.length];
         const eligible = task.eligible_ids.map((id) => personById.get(id)).filter(Boolean);

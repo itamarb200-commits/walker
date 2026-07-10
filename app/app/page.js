@@ -6,18 +6,20 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, BarChart3 } from "lucide-react";
+import { CalendarDays, BarChart3, Settings } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { getMyContext } from "@/lib/family";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import TodayBoard from "@/components/TodayBoard";
 import WeekBoard from "@/components/WeekBoard";
 import StatsBoard from "@/components/StatsBoard";
+import SettingsBoard from "@/components/SettingsBoard";
 
 const TABS = [
   { key: "today", labelKey: "nav.today", Icon: null },
   { key: "week", labelKey: "nav.week", Icon: CalendarDays },
   { key: "stats", labelKey: "nav.stats", Icon: BarChart3 },
+  { key: "settings", labelKey: "nav.settings", Icon: Settings },
 ];
 
 export default function AppHome() {
@@ -60,6 +62,7 @@ export default function AppHome() {
         {tab === "today" && <TodayBoard ctx={ctx} />}
         {tab === "week" && <WeekBoard ctx={ctx} />}
         {tab === "stats" && <StatsBoard ctx={ctx} />}
+        {tab === "settings" && <SettingsBoard ctx={ctx} />}
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md items-center justify-around border-t border-line bg-surface/95 px-4 pb-safe-b pt-2 backdrop-blur-md">

@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { dateKey, weekDays, fetchRangeBoard, toggleLog, deleteLog } from "@/lib/family";
 import { TaskIcon } from "@/lib/task-icons";
 import { personBg } from "@/lib/person-colors";
+import { useI18n } from "@/lib/i18n";
 
 const DAY_LETTERS = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
 const SHEET_SPRING = { type: "spring", duration: 0.45, bounce: 0.18 };
@@ -25,6 +26,7 @@ function taskRows(tasks) {
 }
 
 export default function WeekBoard({ ctx }) {
+  const { t } = useI18n();
   const [offset, setOffset] = useState(0);
   const [data, setData] = useState(null);
   const [picker, setPicker] = useState(null); // { row, day }
@@ -98,14 +100,16 @@ export default function WeekBoard({ ctx }) {
         <button onClick={() => setOffset((o) => o - 1)} className="rounded-btn p-2 text-ink2 active:scale-90">
           <ChevronRight size={20} />
         </button>
-        <h1 className="text-h2">{offset === 0 ? "השבוע" : offset > 0 ? `בעוד ${offset} שבועות` : `לפני ${-offset} שבועות`}</h1>
+        <h1 className="text-h2">
+          {offset === 0 ? t("week.title") : offset > 0 ? t("week.future", { n: offset }) : t("week.past", { n: -offset })}
+        </h1>
         <button onClick={() => setOffset((o) => o + 1)} className="rounded-btn p-2 text-ink2 active:scale-90">
           <ChevronLeft size={20} />
         </button>
       </div>
 
       {rows.length === 0 ? (
-        <p className="pt-16 text-center text-body text-ink2">עדיין אין משימות מוגדרות</p>
+        <p className="pt-16 text-center text-body text-ink2">{t("week.empty")}</p>
       ) : (
         <div className="overflow-x-auto rounded-card bg-surface shadow-card">
           <table className="w-full min-w-[560px] border-collapse text-cap">
@@ -140,7 +144,7 @@ export default function WeekBoard({ ctx }) {
                         <button
                           disabled={isFuture}
                           onClick={() => setPicker({ row, day })}
-                          aria-label={`${row.task.label} ${DAY_LETTERS[day.getDay()]}: ${person ? person.name : "טרם נרשם"}`}
+                          aria-label={`${row.task.label} ${DAY_LETTERS[day.getDay()]}: ${person ? person.name : t("week.unassigned")}`}
                           className={`flex min-h-[36px] w-full items-center justify-center rounded-btn text-cap font-semibold transition-transform active:scale-95
                             ${isFuture ? "cursor-default opacity-30" : ""}
                             ${person ? `${personBg(person.color_idx)} text-white` : "bg-surface2 text-ink2"}`}
@@ -185,7 +189,7 @@ export default function WeekBoard({ ctx }) {
                     {picker.row.slotTime ? ` · ${picker.row.slotTime}` : ""}
                   </p>
                 </div>
-                <button onClick={() => setPicker(null)} aria-label="סגור" className="rounded-btn p-2 text-ink2 active:scale-90">
+                <button onClick={() => setPicker(null)} aria-label={t("common.close")} className="rounded-btn p-2 text-ink2 active:scale-90">
                   <X size={20} />
                 </button>
               </div>
@@ -209,7 +213,7 @@ export default function WeekBoard({ ctx }) {
                            disabled:opacity-40 active:scale-[0.97]"
               >
                 <Eraser size={16} />
-                נקה רישום
+                {t("week.clear")}
               </button>
             </motion.div>
           </motion.div>

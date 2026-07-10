@@ -7,6 +7,14 @@ export const runtime = "nodejs";
 
 const FIRE_WINDOW_MIN = 16; // must exceed the cron cadence (15 min) so no minute is missed
 
+// Minimal server-side strings — families.locale (set at signup) picks he/en.
+// Not the full app dictionary; just enough for a push payload.
+const PUSH_STRINGS = {
+  he: { testTitle: "🔔 התראת בדיקה", testBody: "התזכורות עובדות! ככה ייראו תזכורות המשימות שלכם.", at: "שעה" },
+  en: { testTitle: "🔔 Test reminder", testBody: "Reminders are working! This is what your task reminders will look like.", at: "At" },
+};
+const pushStrings = (locale) => PUSH_STRINGS[locale] || PUSH_STRINGS.he;
+
 function configureVapid() {
   const pub = (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "").trim();
   const priv = (process.env.VAPID_PRIVATE_KEY || "").trim();
@@ -73,9 +81,11 @@ export async function POST(req) {
     if (!v.ok) return NextResponse.json({ error: "VAPID not configured", reason: v.reason }, { status: 500 });
     const { data: sub } = await admin.from("push_subs").select("*").eq("endpoint", body.endpoint).maybeSingle();
     if (!sub) return NextResponse.json({ error: "unknown endpoint" }, { status: 404 });
+    const { data: subFamily } = await admin.from("families").select("locale").eq("id", sub.family_id).maybeSingle();
+    const strings = pushStrings(subFamily?.locale);
     const delivered = await sendToSubs(admin, [sub], {
-      title: "🔔 התראת בדיקה",
-      body: "התזכורות עובדות! ככה ייראו תזכורות המשימות שלכם.",
+      title: strings.testTitle,
+      body: strings.testBody,
       tag: "self-test",
       data: { kind: "test", url: "/app" },
     });
@@ -87,7 +97,7 @@ export async function POST(req) {
   if (!v.ok) return NextResponse.json({ error: "VAPID not configured", reason: v.reason }, { status: 500 });
 
   const [{ data: families }, { data: tasks }, { data: disabledPrefs }] = await Promise.all([
-    admin.from("families").select("id, timezone"),
+    admin.from("families").select("id, timezone, locale"),
     admin.from("tasks").select("id, family_id, label, icon, times"),
     admin.from("notif_prefs").select("user_id, task_id").eq("enabled", false),
   ]);
@@ -104,6 +114,7 @@ export async function POST(req) {
     const familyTasks = tasksByFamily.get(family.id) || [];
     if (familyTasks.length === 0) continue;
     const { hhmm, minutes, dateStr } = familyLocalNow(family.timezone || "Asia/Jerusalem");
+    const strings = pushStrings(family.locale);
 
     for (const task of familyTasks) {
       for (const slotTime of task.times || []) {
@@ -128,7 +139,7 @@ export async function POST(req) {
         if (eligibleSubs.length > 0) {
           const delivered = await sendToSubs(admin, eligibleSubs, {
             title: task.label,
-            body: `שעה ${slotTime}`,
+            body: `${strings.at} ${slotTime}`,
             tag: `${task.id}:${slotTime}:${dateStr}`,
             data: { taskId: task.id, slotTime, familyId: family.id, url: "/app" },
           });

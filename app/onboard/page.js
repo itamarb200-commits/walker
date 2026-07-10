@@ -16,7 +16,7 @@ const STEPS = {
 
 export default function OnboardPage() {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [step, setStep] = useState(STEPS.CHOICE);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,7 +51,7 @@ export default function OnboardPage() {
 
   const handleCreateFamily = async () => {
     if (!familyName.trim() || !personName.trim()) {
-      toast.error("שנה את כל השדות");
+      toast.error(t("common.fillAllFields"));
       return;
     }
     setIsSubmitting(true);
@@ -61,6 +61,9 @@ export default function OnboardPage() {
         person_name: personName,
       });
       if (error) throw error;
+      // Record the language the family was set up in — used later to pick
+      // he/en for server-sent push notification text (no session there).
+      await supabaseBrowser().from("families").update({ locale }).eq("id", data);
       // Save family_id for next steps
       sessionStorage.setItem("family_id", data);
       setStep(STEPS.PETS);
@@ -73,7 +76,7 @@ export default function OnboardPage() {
 
   const handleJoinFamily = async () => {
     if (!inviteCode.trim() || !personName.trim()) {
-      toast.error("שנה את כל השדות");
+      toast.error(t("common.fillAllFields"));
       return;
     }
     setIsSubmitting(true);
@@ -109,7 +112,7 @@ export default function OnboardPage() {
   const savePetsAndContinue = async () => {
     const familyId = sessionStorage.getItem("family_id");
     if (!familyId) {
-      toast.error("משהו השתבש");
+      toast.error(t("common.somethingWrong"));
       return;
     }
     const named = pets.filter((p) => p.name.trim());
@@ -129,17 +132,17 @@ export default function OnboardPage() {
     }
   };
 
-  // Sensible defaults per template — edited later from Settings (Phase 5).
+  // Sensible defaults per template — editable later from Settings.
   const TASK_TEMPLATES = {
-    walks: { label: "טיול", icon: "paw", times: ["08:00", "16:00", "20:00"] },
-    feeds: { label: "האכלה", icon: "utensils", times: ["08:00", "18:00"] },
-    meds: { label: "תרופה", icon: "pill", times: ["09:00"] },
+    walks: { label: t("template.walks.label"), icon: "paw", times: ["08:00", "16:00", "20:00"] },
+    feeds: { label: t("template.feeds.label"), icon: "utensils", times: ["08:00", "18:00"] },
+    meds: { label: t("template.meds.label"), icon: "pill", times: ["09:00"] },
   };
 
   const finishOnboarding = async () => {
     const familyId = sessionStorage.getItem("family_id");
     if (!familyId) {
-      toast.error("משהו השתבש");
+      toast.error(t("common.somethingWrong"));
       return;
     }
     setIsSubmitting(true);
@@ -173,7 +176,7 @@ export default function OnboardPage() {
     }
   };
 
-  if (isLoading) return <div className="flex h-dvh items-center justify-center">טוען...</div>;
+  if (isLoading) return <div className="flex h-dvh items-center justify-center">{t("common.loading")}</div>;
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col px-6 py-10 pb-safe-b">
@@ -199,22 +202,22 @@ export default function OnboardPage() {
       {step === STEPS.CHOICE && (
         <div className="flex flex-1 flex-col justify-center gap-6">
           <div>
-            <h1 className="text-h1 mb-2">בואו נתחיל</h1>
-            <p className="text-body text-ink2">בחרו להקים משפחה חדשה או להצטרף לקיימת</p>
+            <h1 className="text-h1 mb-2">{t("onboard.title")}</h1>
+            <p className="text-body text-ink2">{t("onboard.subtitle")}</p>
           </div>
           <button
             onClick={() => setChoice("create")}
             className="rounded-btn border-2 border-accent bg-accent/5 px-6 py-4 text-body font-semibold text-accent
                        transition-transform active:scale-[0.97]"
           >
-            ✨ צרו משפחה חדשה
+            {t("onboard.createFamily")}
           </button>
           <button
             onClick={() => setChoice("join")}
             className="rounded-btn border-2 border-line px-6 py-4 text-body font-semibold text-ink
                        transition-transform active:scale-[0.97]"
           >
-            👥 הצטרפו למשפחה קיימת
+            {t("onboard.joinFamily")}
           </button>
         </div>
       )}
@@ -224,19 +227,17 @@ export default function OnboardPage() {
         <div className="flex flex-1 flex-col justify-center gap-6">
           <div>
             <h2 className="text-h1 mb-2">
-              {choice === "create" ? "צרו משפחה" : "הצטרפו למשפחה"}
+              {choice === "create" ? t("onboard.createFamily.title") : t("onboard.joinFamily.title")}
             </h2>
             <p className="text-body text-ink2">
-              {choice === "create"
-                ? "תנו שם לקבוצה שלכם"
-                : "הזינו את קוד ההזמנה"}
+              {choice === "create" ? t("onboard.createFamily.subtitle") : t("onboard.joinFamily.subtitle")}
             </p>
           </div>
           {choice === "create" ? (
             <div className="space-y-3">
               <input
                 type="text"
-                placeholder="כהן משפחה"
+                placeholder={t("onboard.familyNamePlaceholder")}
                 value={familyName}
                 onChange={(e) => setFamilyName(e.target.value)}
                 disabled={isSubmitting}
@@ -245,7 +246,7 @@ export default function OnboardPage() {
               />
               <input
                 type="text"
-                placeholder="השם שלך"
+                placeholder={t("onboard.yourNamePlaceholder")}
                 value={personName}
                 onChange={(e) => setPersonName(e.target.value)}
                 disabled={isSubmitting}
@@ -258,7 +259,7 @@ export default function OnboardPage() {
                 className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-btn bg-accent px-4 text-body font-bold text-accent-fg
                            disabled:opacity-70 active:scale-[0.97]"
               >
-                {isSubmitting ? "יוצר..." : "המשך"}
+                {isSubmitting ? t("onboard.creating") : t("common.next")}
                 <ArrowRight size={18} />
               </button>
             </div>
@@ -266,7 +267,7 @@ export default function OnboardPage() {
             <div className="space-y-3">
               <input
                 type="text"
-                placeholder="קוד הזמנה (8 תווים)"
+                placeholder={t("onboard.invitePlaceholder")}
                 value={inviteCode}
                 onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
                 disabled={isSubmitting}
@@ -275,7 +276,7 @@ export default function OnboardPage() {
               />
               <input
                 type="text"
-                placeholder="מי אתה בקבוצה?"
+                placeholder={t("onboard.whoAreYouPlaceholder")}
                 value={personName}
                 onChange={(e) => setPersonName(e.target.value)}
                 disabled={isSubmitting}
@@ -288,7 +289,7 @@ export default function OnboardPage() {
                 className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-btn bg-accent px-4 text-body font-bold text-accent-fg
                            disabled:opacity-70 active:scale-[0.97]"
               >
-                {isSubmitting ? "מוודא..." : "הצטרפות"}
+                {isSubmitting ? t("onboard.verifying") : t("onboard.joinButton")}
                 <ArrowRight size={18} />
               </button>
             </div>
@@ -301,7 +302,7 @@ export default function OnboardPage() {
             className="text-body text-ink2 flex items-center gap-1"
           >
             <ArrowLeft size={16} />
-            חזרה
+            {t("common.back")}
           </button>
         </div>
       )}
@@ -310,15 +311,15 @@ export default function OnboardPage() {
       {step === STEPS.PETS && (
         <div className="flex flex-1 flex-col justify-between gap-6">
           <div>
-            <h2 className="text-h1 mb-2">הוסיפו חיות</h2>
-            <p className="text-body text-ink2">מי אנחנו מטפלים בו?</p>
+            <h2 className="text-h1 mb-2">{t("onboard.pets.title")}</h2>
+            <p className="text-body text-ink2">{t("onboard.pets.subtitle")}</p>
           </div>
           <div className="space-y-3 flex-1">
             {pets.map((pet, idx) => (
               <div key={idx} className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="שם"
+                  placeholder={t("onboard.pets.namePlaceholder")}
                   value={pet.name}
                   onChange={(e) => updatePet(idx, "name", e.target.value)}
                   className="flex-1 rounded-btn border border-line bg-surface px-3 py-2 text-sub"
@@ -328,9 +329,9 @@ export default function OnboardPage() {
                   onChange={(e) => updatePet(idx, "species", e.target.value)}
                   className="rounded-btn border border-line bg-surface px-3 py-2 text-sub"
                 >
-                  <option value="dog">כלב</option>
-                  <option value="cat">חתול</option>
-                  <option value="other">אחר</option>
+                  <option value="dog">{t("species.dog")}</option>
+                  <option value="cat">{t("species.cat")}</option>
+                  <option value="other">{t("species.other")}</option>
                 </select>
                 <button
                   onClick={() => removePet(idx)}
@@ -345,7 +346,7 @@ export default function OnboardPage() {
               className="w-full rounded-btn border-2 border-dashed border-line px-4 py-3 text-body font-semibold text-ink2
                          transition-colors hover:border-accent hover:text-accent"
             >
-              + הוסף חיית חמד
+              {t("onboard.pets.add")}
             </button>
           </div>
           <div className="flex gap-3">
@@ -353,7 +354,7 @@ export default function OnboardPage() {
               onClick={() => setStep(STEPS.FAMILY)}
               className="flex-1 rounded-btn border border-line px-4 py-3 text-body font-semibold text-ink"
             >
-              חזרה
+              {t("common.back")}
             </button>
             <button
               onClick={savePetsAndContinue}
@@ -361,7 +362,7 @@ export default function OnboardPage() {
               className="flex-1 flex items-center justify-center gap-2 rounded-btn bg-accent px-4 py-3 text-body font-bold text-accent-fg
                          disabled:opacity-70 active:scale-[0.97]"
             >
-              המשך
+              {t("common.next")}
               <ArrowRight size={16} />
             </button>
           </div>
@@ -372,14 +373,14 @@ export default function OnboardPage() {
       {step === STEPS.TASKS && (
         <div className="flex flex-1 flex-col justify-between gap-6">
           <div>
-            <h2 className="text-h1 mb-2">בחרו משימות</h2>
-            <p className="text-body text-ink2">אילו טיפול תעקוב אחריו?</p>
+            <h2 className="text-h1 mb-2">{t("onboard.tasks.title")}</h2>
+            <p className="text-body text-ink2">{t("onboard.tasks.subtitle")}</p>
           </div>
           <div className="space-y-2 flex-1">
             {[
-              { id: "walks", label: "🚶 טיולים (3 פעמים ביום)" },
-              { id: "feeds", label: "🥗 האכלות (2 פעמים ביום)" },
-              { id: "meds", label: "💊 תרופות" },
+              { id: "walks", label: t("onboard.tasks.walks") },
+              { id: "feeds", label: t("onboard.tasks.feeds") },
+              { id: "meds", label: t("onboard.tasks.meds") },
             ].map((task) => (
               <button
                 key={task.id}
@@ -406,7 +407,7 @@ export default function OnboardPage() {
               onClick={() => setStep(STEPS.PETS)}
               className="flex-1 rounded-btn border border-line px-4 py-3 text-body font-semibold text-ink"
             >
-              חזרה
+              {t("common.back")}
             </button>
             <button
               onClick={finishOnboarding}
@@ -414,7 +415,7 @@ export default function OnboardPage() {
               className="flex-1 rounded-btn bg-accent px-4 py-3 text-body font-bold text-accent-fg
                          disabled:opacity-70 active:scale-[0.97]"
             >
-              סיום 🎉
+              {t("onboard.finish")}
             </button>
           </div>
         </div>

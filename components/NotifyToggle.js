@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Bell, BellOff, BellRing } from "lucide-react";
 import { pushStatus, enablePush, disablePush } from "@/lib/push-client";
+import { useI18n } from "@/lib/i18n";
 
-// Enable/disable push reminders for this device + a self-test. Lives on the
-// Statistics tab for now (mirrors Milo); moves into a real Settings screen
-// in Phase 5 once per-task notification prefs need their own UI.
+// Enable/disable push reminders for this device + a self-test. Lives in
+// Settings alongside the rest of the family/task configuration.
 export default function NotifyToggle() {
+  const { t } = useI18n();
   const [status, setStatus] = useState("loading"); // loading|unsupported|denied|off|on
   const [busy, setBusy] = useState(false);
 
@@ -24,12 +25,12 @@ export default function NotifyToggle() {
     try {
       if (status === "on") {
         setStatus(await disablePush());
-        toast("התראות כובו במכשיר הזה");
+        toast(t("notify.disabledToast"));
       } else {
         const next = await enablePush();
         setStatus(next);
-        if (next === "on") toast.success("התראות הופעלו ✓");
-        else if (next === "denied") toast.error("ההרשאה נחסמה — צריך לאפשר בהגדרות הדפדפן");
+        if (next === "on") toast.success(t("notify.enabledToast"));
+        else if (next === "denied") toast.error(t("notify.deniedToast"));
       }
     } finally {
       setBusy(false);
@@ -42,16 +43,16 @@ export default function NotifyToggle() {
     try {
       const reg = await navigator.serviceWorker.getRegistration();
       const sub = reg && (await reg.pushManager.getSubscription());
-      if (!sub) { toast.error("צריך להפעיל התראות קודם"); return; }
+      if (!sub) { toast.error(t("notify.needEnableFirst")); return; }
       const res = await fetch("/api/push/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selfTest: true, endpoint: sub.endpoint }),
       });
-      if (res.ok) toast.success("נשלחה התראת בדיקה 🔔");
-      else toast.error("שליחת הבדיקה נכשלה");
+      if (res.ok) toast.success(t("notify.testSent"));
+      else toast.error(t("notify.testFailed"));
     } catch {
-      toast.error("שליחת הבדיקה נכשלה");
+      toast.error(t("notify.testFailed"));
     } finally {
       setBusy(false);
     }
@@ -73,12 +74,12 @@ export default function NotifyToggle() {
           <Icon size={20} strokeWidth={2.2} aria-hidden="true" />
         </span>
         <div className="flex-1">
-          <h2 className="text-body font-extrabold text-ink">תזכורות</h2>
+          <h2 className="text-body font-extrabold text-ink">{t("notify.title")}</h2>
           <p className="text-cap font-medium text-ink2">
-            {status === "unsupported" ? "לא נתמך בדפדפן הזה"
-              : status === "denied"   ? "חסום — אפשר התראות בהגדרות"
-              : isOn                  ? "פעיל במכשיר הזה"
-              :                         "כבוי"}
+            {status === "unsupported" ? t("notify.unsupported")
+              : status === "denied"   ? t("notify.denied")
+              : isOn                  ? t("notify.on")
+              :                         t("notify.off")}
           </p>
         </div>
 
@@ -88,7 +89,7 @@ export default function NotifyToggle() {
             disabled={busy}
             role="switch"
             aria-checked={isOn}
-            aria-label="הפעלת תזכורות"
+            aria-label={t("notify.title")}
             className={`relative h-7 w-12 shrink-0 rounded-pill transition-colors duration-200 ease-out disabled:opacity-50 ${
               isOn ? "bg-accent" : "bg-surface2"
             }`}
@@ -111,15 +112,12 @@ export default function NotifyToggle() {
           className="mt-3 w-full rounded-btn bg-surface2 py-2.5 text-sub font-semibold text-ink
                      transition-transform duration-150 ease-out active:scale-[0.98] disabled:opacity-50"
         >
-          שלח התראת בדיקה
+          {t("notify.sendTest")}
         </button>
       )}
 
       {status === "unsupported" && (
-        <p className="mt-2.5 text-cap text-ink2">
-          ב-iPhone: הוסיפו את האפליקציה למסך הבית (Safari ← שיתוף ← הוסף למסך הבית),
-          פתחו אותה משם, ואז אפשרו תזכורות. דרוש iOS 16.4 ומעלה.
-        </p>
+        <p className="mt-2.5 text-cap text-ink2">{t("notify.iosHint")}</p>
       )}
     </section>
   );

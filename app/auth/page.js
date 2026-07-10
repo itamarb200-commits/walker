@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useI18n } from "@/lib/i18n";
-import { Mail, Github } from "lucide-react";
+import { Mail } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AuthPage() {
@@ -24,7 +24,7 @@ export default function AuthPage() {
 
   const handleEmailSignup = async () => {
     if (!email.trim()) {
-      toast.error("הזן אימייל");
+      toast.error(t("auth.enterEmail"));
       return;
     }
     setIsLoading(true);
@@ -36,7 +36,7 @@ export default function AuthPage() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("בדוק את האימייל שלך לקישור כניסה");
+      toast.success(t("auth.checkEmail"));
       setEmail("");
     }
   };
@@ -54,7 +54,7 @@ export default function AuthPage() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-8 px-6 pb-safe-b pt-10">
       <div className="flex flex-col items-center gap-2">
-        <h1 className="text-h1">Walker</h1>
+        <h1 className="text-h1">{t("app.name")}</h1>
         <p className="text-sub text-ink2">{t("app.tagline")}</p>
       </div>
 
@@ -81,13 +81,13 @@ export default function AuthPage() {
                      disabled:opacity-70 transition-transform duration-150 active:scale-[0.97]"
         >
           <Mail size={18} />
-          המשך עם אימייל
+          {t("auth.continueEmail")}
         </button>
       </form>
 
       <div className="flex w-full gap-2">
         <div className="h-px flex-1 bg-line" />
-        <span className="text-cap text-ink2">או</span>
+        <span className="text-cap text-ink2">{t("common.or")}</span>
         <div className="h-px flex-1 bg-line" />
       </div>
 
@@ -115,12 +115,10 @@ export default function AuthPage() {
             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
           />
         </svg>
-        המשך עם Google
+        {t("auth.continueGoogle")}
       </button>
 
-      <p className="text-cap text-center text-ink2">
-        על ידי כניסה, אתה מסכים לתנאים שלנו.
-      </p>
+      <p className="text-cap text-center text-ink2">{t("auth.terms")}</p>
     </div>
   );
 }

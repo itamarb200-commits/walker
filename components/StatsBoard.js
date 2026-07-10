@@ -8,13 +8,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { dateKey, weekDays, fetchRangeBoard } from "@/lib/family";
 import { personBg } from "@/lib/person-colors";
-import NotifyToggle from "@/components/NotifyToggle";
+import { useI18n } from "@/lib/i18n";
 
-const RANGES = [
-  { key: "week", label: "שבוע" },
-  { key: "month", label: "חודש" },
-  { key: "all", label: "הכל" },
-];
+const RANGE_KEYS = ["week", "month", "all"];
 
 function rangeDates(range) {
   const today = new Date();
@@ -31,6 +27,7 @@ function rangeDates(range) {
 }
 
 export default function StatsBoard({ ctx }) {
+  const { t } = useI18n();
   const [range, setRange] = useState("week");
   const [data, setData] = useState(null);
 
@@ -62,27 +59,27 @@ export default function StatsBoard({ ctx }) {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-h1">סטטיסטיקה</h1>
+        <h1 className="text-h1">{t("nav.stats")}</h1>
         <div className="flex gap-1 rounded-pill bg-surface2 p-1">
-          {RANGES.map((r) => (
+          {RANGE_KEYS.map((r) => (
             <button
-              key={r.key}
-              onClick={() => setRange(r.key)}
+              key={r}
+              onClick={() => setRange(r)}
               className={`rounded-pill px-3 py-1.5 text-cap font-semibold transition-colors ${
-                range === r.key ? "bg-accent text-accent-fg" : "text-ink2"
+                range === r ? "bg-accent text-accent-fg" : "text-ink2"
               }`}
             >
-              {r.label}
+              {t(`stats.range.${r}`)}
             </button>
           ))}
         </div>
       </div>
 
-      <NotifyToggle />
-
       {/* Tally bars */}
       <div className="rounded-card bg-surface p-5 shadow-card">
-        <p className="mb-4 text-cap font-semibold text-ink2">הוצאות · {RANGES.find((r) => r.key === range).label}</p>
+        <p className="mb-4 text-cap font-semibold text-ink2">
+          {t("stats.tally", { range: t(`stats.range.${range}`) })}
+        </p>
         <div className="space-y-3">
           {data.persons.map((person) => {
             const count = tally.get(person.id) || 0;
@@ -106,9 +103,9 @@ export default function StatsBoard({ ctx }) {
 
       {/* Recent history */}
       <div className="rounded-card bg-surface p-5 shadow-card">
-        <p className="mb-3 text-cap font-semibold text-ink2">הוצאות אחרונות</p>
+        <p className="mb-3 text-cap font-semibold text-ink2">{t("stats.history")}</p>
         {data.logs.length === 0 ? (
-          <p className="py-6 text-center text-sub text-ink2">אין עדיין רישומים</p>
+          <p className="py-6 text-center text-sub text-ink2">{t("stats.empty")}</p>
         ) : (
           <div className="space-y-2">
             {data.logs.slice(0, 25).map((log) => {
@@ -120,7 +117,7 @@ export default function StatsBoard({ ctx }) {
                   <div className="flex items-center gap-2">
                     <span className={`h-2 w-2 shrink-0 rounded-full ${personBg(person.color_idx)}`} />
                     <span className="text-sub text-ink">
-                      {person.name} · {log.is_help ? "עזרה · " : ""}
+                      {person.name} · {log.is_help ? t("stats.help") : ""}
                       {task.label}
                       {log.slot_time ? ` · ${log.slot_time}` : ""}
                     </span>
