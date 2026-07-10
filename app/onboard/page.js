@@ -27,7 +27,7 @@ export default function OnboardPage() {
   const [pets, setPets] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
 
-  // Check if already in a family — if so, redirect to home
+  // If already onboarded (has a person row), skip straight to the app.
   useEffect(() => {
     const checkFamily = async () => {
       const { data: { user } } = await supabaseBrowser().auth.getUser();
@@ -35,8 +35,15 @@ export default function OnboardPage() {
         router.push("/auth");
         return;
       }
-      // TODO: check if user has a person_id in persons table
-      // For now, assume they're new
+      const { data: person } = await supabaseBrowser()
+        .from("persons")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (person) {
+        router.push("/");
+        return;
+      }
       setIsLoading(false);
     };
     checkFamily();
@@ -105,20 +112,65 @@ export default function OnboardPage() {
       toast.error("משהו השתבש");
       return;
     }
+    const named = pets.filter((p) => p.name.trim());
     setIsSubmitting(true);
     try {
-      // TODO: insert pets into the DB
-      // For now, just move to next step
+      if (named.length > 0) {
+        const { error } = await supabaseBrowser()
+          .from("pets")
+          .insert(named.map((p) => ({ family_id: familyId, name: p.name.trim(), species: p.species })));
+        if (error) throw error;
+      }
       setStep(STEPS.TASKS);
+    } catch (err) {
+      toast.error(err.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Sensible defaults per template — edited later from Settings (Phase 5).
+  const TASK_TEMPLATES = {
+    walks: { label: "טיול", icon: "paw", times: ["08:00", "16:00", "20:00"] },
+    feeds: { label: "האכלה", icon: "utensils", times: ["08:00", "18:00"] },
+    meds: { label: "תרופה", icon: "pill", times: ["09:00"] },
+  };
+
   const finishOnboarding = async () => {
-    // TODO: save selected task templates
-    // Redirect to home
-    router.push("/");
+    const familyId = sessionStorage.getItem("family_id");
+    if (!familyId) {
+      toast.error("משהו השתבש");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      // Every current family member rotates through the new tasks by default.
+      const { data: persons, error: personsErr } = await supabaseBrowser()
+        .from("persons")
+        .select("id")
+        .eq("family_id", familyId);
+      if (personsErr) throw personsErr;
+      const eligibleIds = (persons || []).map((p) => p.id);
+
+      const rows = selectedTasks.map((id, idx) => ({
+        family_id: familyId,
+        label: TASK_TEMPLATES[id].label,
+        icon: TASK_TEMPLATES[id].icon,
+        times: TASK_TEMPLATES[id].times,
+        eligible_ids: eligibleIds,
+        track_fairness: true,
+        sort_order: idx,
+      }));
+      const { error } = await supabaseBrowser().from("tasks").insert(rows);
+      if (error) throw error;
+
+      sessionStorage.removeItem("family_id");
+      router.push("/");
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isLoading) return <div className="flex h-dvh items-center justify-center">טוען...</div>;
