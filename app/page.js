@@ -1,19 +1,43 @@
 "use client";
 
 // ─── Landing — pre-auth entry point ──────────────────────────────────────────
-// Phase 0 placeholder: shows the design system + locale switch. The two CTAs
-// will route into the auth + onboarding flow in Phase 1.
+// Shown to signed-out visitors. A returning signed-in user is bounced
+// straight to /app (or /onboard if they never finished the wizard) so "/"
+// never shows stale marketing copy to someone already using the product.
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
-import { PawPrint, Users, Globe } from "lucide-react";
-import { toast } from "sonner";
+import { PawPrint, Globe } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { supabaseBrowser } from "@/lib/supabase/client";
 
 const EASE = [0.23, 1, 0.32, 1];
 
 export default function Landing() {
   const { t, locale, setLocale } = useI18n();
   const reduceMotion = useReducedMotion();
+  const router = useRouter();
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    const redirectIfSignedIn = async () => {
+      const { data: { user } } = await supabaseBrowser().auth.getUser();
+      if (!user) {
+        setChecked(true);
+        return;
+      }
+      const { data: person } = await supabaseBrowser()
+        .from("persons")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      router.push(person ? "/app" : "/onboard");
+    };
+    redirectIfSignedIn();
+  }, [router]);
+
+  if (!checked) return null;
 
   const entrance = (delay) =>
     reduceMotion

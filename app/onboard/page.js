@@ -41,7 +41,7 @@ export default function OnboardPage() {
         .eq("user_id", user.id)
         .maybeSingle();
       if (person) {
-        router.push("/");
+        router.push("/app");
         return;
       }
       setIsLoading(false);
@@ -165,7 +165,7 @@ export default function OnboardPage() {
       if (error) throw error;
 
       sessionStorage.removeItem("family_id");
-      router.push("/");
+      router.push("/app");
     } catch (err) {
       toast.error(err.message);
     } finally {
