@@ -2,8 +2,7 @@
 
 // ─── Main app shell ───────────────────────────────────────────────────────────
 // Guards on: signed in (else /auth) + onboarded (else /onboard). Tab state is
-// local (today/week/stats), matching Milo's single-page pattern. Week board
-// and Statistics are built in Phase 3 — today they're friendly placeholders.
+// local (today/week/stats), matching Milo's single-page pattern.
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";

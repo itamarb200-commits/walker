@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { dateKey, weekDays, fetchRangeBoard } from "@/lib/family";
 import { personBg } from "@/lib/person-colors";
+import NotifyToggle from "@/components/NotifyToggle";
 
 const RANGES = [
   { key: "week", label: "שבוע" },
@@ -76,6 +77,8 @@ export default function StatsBoard({ ctx }) {
           ))}
         </div>
       </div>
+
+      <NotifyToggle />
 
       {/* Tally bars */}
       <div className="rounded-card bg-surface p-5 shadow-card">
