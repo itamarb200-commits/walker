@@ -97,13 +97,13 @@ export default function WeekBoard({ ctx }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <button onClick={() => setOffset((o) => o - 1)} className="rounded-btn p-2 text-ink2 active:scale-90">
+        <button onClick={() => setOffset((o) => o - 1)} className="rounded-btn p-2 text-ink2 active:scale-[0.97]">
           <ChevronRight size={20} />
         </button>
         <h1 className="text-h2">
           {offset === 0 ? t("week.title") : offset > 0 ? t("week.future", { n: offset }) : t("week.past", { n: -offset })}
         </h1>
-        <button onClick={() => setOffset((o) => o + 1)} className="rounded-btn p-2 text-ink2 active:scale-90">
+        <button onClick={() => setOffset((o) => o + 1)} className="rounded-btn p-2 text-ink2 active:scale-[0.97]">
           <ChevronLeft size={20} />
         </button>
       </div>
@@ -116,11 +116,19 @@ export default function WeekBoard({ ctx }) {
             <thead>
               <tr>
                 <th className="w-28 p-2 text-start" />
-                {days.map((day) => (
-                  <th key={day.toISOString()} className="p-2 text-center font-semibold text-ink2">
-                    {DAY_LETTERS[day.getDay()]} {day.getDate()}
-                  </th>
-                ))}
+                {days.map((day) => {
+                  const isToday = dateKey(day) === today;
+                  return (
+                    <th
+                      key={day.toISOString()}
+                      className={`p-2 text-center font-semibold ${
+                        isToday ? "rounded-t-btn bg-accent/5 text-accent" : "text-ink2"
+                      }`}
+                    >
+                      {DAY_LETTERS[day.getDay()]} {day.getDate()}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>
@@ -139,15 +147,16 @@ export default function WeekBoard({ ctx }) {
                     const entry = entryFor(row, day);
                     const person = entry ? personById.get(entry.person_id) : null;
                     const isFuture = dateKey(day) > today;
+                    const isToday = dateKey(day) === today;
                     return (
-                      <td key={day.toISOString()} className="p-1.5 text-center">
+                      <td key={day.toISOString()} className={`p-1.5 text-center ${isToday ? "bg-accent/5" : ""}`}>
                         <button
                           disabled={isFuture}
                           onClick={() => setPicker({ row, day })}
                           aria-label={`${row.task.label} ${DAY_LETTERS[day.getDay()]}: ${person ? person.name : t("week.unassigned")}`}
-                          className={`flex min-h-[36px] w-full items-center justify-center rounded-btn text-cap font-semibold transition-transform active:scale-95
+                          className={`flex min-h-[44px] w-full items-center justify-center rounded-btn text-cap font-semibold transition-transform active:scale-[0.97]
                             ${isFuture ? "cursor-default opacity-30" : ""}
-                            ${person ? `${personBg(person.color_idx)} text-white` : "bg-surface2 text-ink2"}`}
+                            ${person ? `${personBg(person.color_idx)} text-knob` : "bg-surface2 text-ink2"}`}
                         >
                           {person ? person.name : "—"}
                         </button>
@@ -167,7 +176,7 @@ export default function WeekBoard({ ctx }) {
             role="dialog"
             aria-modal="true"
             aria-label={picker.row.task.label}
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-scrim backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.14 } }}
@@ -181,6 +190,7 @@ export default function WeekBoard({ ctx }) {
               exit={{ y: "100%", transition: { duration: 0.18 } }}
               transition={SHEET_SPRING}
             >
+              <div className="mx-auto mb-3 h-1 w-10 rounded-pill bg-ink/15" aria-hidden="true" />
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <h2 className="text-h2">{picker.row.task.label}</h2>
@@ -189,7 +199,7 @@ export default function WeekBoard({ ctx }) {
                     {picker.row.slotTime ? ` · ${picker.row.slotTime}` : ""}
                   </p>
                 </div>
-                <button onClick={() => setPicker(null)} aria-label={t("common.close")} className="rounded-btn p-2 text-ink2 active:scale-90">
+                <button onClick={() => setPicker(null)} aria-label={t("common.close")} className="rounded-btn p-2 text-ink2 active:scale-[0.97]">
                   <X size={20} />
                 </button>
               </div>
@@ -199,7 +209,7 @@ export default function WeekBoard({ ctx }) {
                   <button
                     key={person.id}
                     onClick={() => pick(person.id)}
-                    className={`flex min-h-[48px] items-center justify-center gap-2 rounded-btn text-body font-semibold text-white transition-transform active:scale-[0.97] ${personBg(person.color_idx)}`}
+                    className={`flex min-h-[48px] items-center justify-center gap-2 rounded-btn text-body font-semibold text-knob transition-transform active:scale-[0.97] ${personBg(person.color_idx)}`}
                   >
                     {person.name}
                   </button>

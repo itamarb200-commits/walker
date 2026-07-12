@@ -1,55 +1,96 @@
-/* Assistant — covers Hebrew + Latin, single family. swap avoids FOIT. */
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── Walker design system — "Bright & Playful" ────────────────────────────────
-   60-30-10 rule:
-   • 60% — clean light surfaces (--bg / --surface) for screen, cards, tiles
-   • 30% — vivid blue (--accent) for CTAs, nav, primary icons + slate (--ink)
-   • 10% — sunny yellow (--highlight) for scarce eye-catchers
-   Family members get a hue from the --pal-N palette, assigned by join order.
+/* ── Walker design system — "Hearth" ──────────────────────────────────────────
+   Warm & family. Near-white neutral surfaces (never cream); the warmth is
+   carried by the coral accent, the golden highlight, and the card tints.
+   • Restrained inside the app: accent = actions, selection, state only.
+   • --highlight (golden amber) is scarce: completion, the weekly leader.
+   Family members get a hue from --pal-N, assigned by join order.
    All semantic colors are RGB triplets so Tailwind alpha modifiers work.
-   Pairs verified for WCAG AA contrast. */
+   Dark mode is automatic: every token flips under prefers-color-scheme,
+   so components never need dark: variants.
+   Text pairs verified for WCAG AA (body ≥4.5:1, large/bold ≥3:1). */
 
 :root {
-  /* Core palette */
-  --bg:        247 249 252;   /* #F7F9FC cool light — main surface (60%) */
-  --surface:   255 255 255;   /* pure white card */
-  --surface2:  238 242 248;   /* cool light well — wells, skeletons */
-  --ink:        30  41  59;   /* #1E293B slate — primary type */
-  --ink2:       96 113 130;   /* muted slate — ~5.2:1 on white (AA) */
-  --accent:     37  99 235;   /* #2563EB vivid blue — primary CTA + nav (30%) */
-  --accent-fg: 255 255 255;   /* on blue: AA ✓ */
-  --highlight: 250 204  21;   /* #FACC15 sunny yellow — the 10% accent */
-  --highlight-fg: 30  41  59; /* slate on yellow — AAA */
-  --success:    21 128  61;   /* #15803D green — done (white text AA) */
-  --danger:    220  38  38;   /* #DC2626 red */
-  --line:      rgba(30, 41, 59, 0.10);
+  /* Core palette — light */
+  --bg:        250 250 249;   /* #FAFAF9 clean near-white */
+  --surface:   255 255 255;   /* card */
+  --surface2:  242 239 236;   /* wells, skeletons, idle chips */
+  --ink:        41  37  36;   /* #292524 warm stone — primary type */
+  --ink2:      105  98  91;   /* muted warm stone — ≥5:1 on surface */
+  --accent:    224  81  55;   /* #E05137 coral persimmon — actions, selection */
+  --accent-fg: 255 255 255;
+  --highlight: 240 180  41;   /* #F0B429 golden amber — earned moments only */
+  --highlight-fg: 61  42  10;
+  --success:    26 127  60;   /* warm green */
+  --danger:    190  34  42;   /* crimson — deeper than accent, reads "stop" */
+  --line:      rgba(41, 37, 36, 0.10);
+  --scrim:     rgba(41, 37, 36, 0.50);
+  --knob:      255 255 255;   /* switch knob — deliberately white in both themes */
 
-  /* Person palette — 8 vivid, distinct, accessible hues assigned by index. */
-  --pal-1: 239  68  68;    /* red */
-  --pal-2:  14 165 233;    /* sky */
-  --pal-3:  34 197  94;    /* green */
-  --pal-4: 245 158  11;    /* amber */
-  --pal-5: 168  85 247;    /* purple */
-  --pal-6: 236  72 153;    /* pink */
-  --pal-7:  20 184 166;    /* teal */
-  --pal-8: 249 115  22;    /* orange */
+  /* Person palette — 8 warm-harmonized hues; all ≥4.3:1 with white chip text. */
+  --pal-1: 214  69 107;    /* rose */
+  --pal-2: 161  98   7;    /* golden */
+  --pal-3:  47 125  70;    /* sage */
+  --pal-4:  36 114 164;    /* sky */
+  --pal-5: 137  66 194;    /* plum */
+  --pal-6: 194  53 155;    /* pink */
+  --pal-7:  15 118 110;    /* teal */
+  --pal-8: 192  86  33;    /* clementine */
 
-  /* Bento c-* tokens — one light tint per hue, for task cards & charts. */
-  --c-yellow:  254 249 195;   /* yellow-100 */
-  --c-purple:  243 232 255;   /* purple-100 */
-  --c-blue:    219 234 254;   /* blue-100 */
-  --c-pink:    254 226 226;   /* red-100 */
-  --c-mint:    220 252 231;   /* green-100 */
-  --c-peach:   255 237 213;   /* orange-100 */
+  /* Card tints — warm pastels for task cards & charts. */
+  --c-yellow: 251 239 203;
+  --c-purple: 240 231 248;
+  --c-blue:   227 238 246;
+  --c-pink:   251 229 231;
+  --c-mint:   226 242 229;
+  --c-peach:  252 232 220;
 
-  /* Shadow stack tinted with slate — diffused, no hard lines */
-  --shadow-card:  0 6px 20px -6px rgba(30, 41, 59, 0.10), 0 2px 6px -2px rgba(30, 41, 59, 0.06);
-  --shadow-float: 0 18px 44px -14px rgba(30, 41, 59, 0.18), 0 6px 14px -6px rgba(30, 41, 59, 0.08);
+  /* Shadows tinted warm stone — diffused, no hard lines */
+  --shadow-card:  0 6px 20px -6px rgba(41, 37, 36, 0.10), 0 2px 6px -2px rgba(41, 37, 36, 0.06);
+  --shadow-float: 0 18px 44px -14px rgba(41, 37, 36, 0.18), 0 6px 14px -6px rgba(41, 37, 36, 0.08);
+}
+
+/* Dark — warm espresso, auto via device setting. Same semantic roles. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        27  25  23;    /* #1B1917 */
+    --surface:   38  34  32;
+    --surface2:  51  46  42;
+    --ink:      242 239 236;
+    --ink2:     168 161 154;
+    --accent:   240 120  92;    /* brightened coral */
+    --accent-fg: 43  20  14;    /* deep brown on coral */
+    --highlight: 247 201  72;
+    --highlight-fg: 61  42  10;
+    --success:   74 200 122;
+    --danger:   241 106  94;
+    --line:     rgba(255, 255, 255, 0.10);
+    --scrim:    rgba(0, 0, 0, 0.60);
+
+    /* Brightened one notch: ≥4.5:1 as text on --bg, ≥3:1 under white chip text */
+    --pal-1: 224  86 126;
+    --pal-2: 199 127  19;
+    --pal-3:  59 158  88;
+    --pal-4:  51 144 204;
+    --pal-5: 172 116 224;
+    --pal-6: 215  92 183;
+    --pal-7:  26 163 150;
+    --pal-8: 214 112  46;
+
+    /* Deep muted tints — a hue whisper on dark surfaces */
+    --c-yellow: 51 44 27;
+    --c-purple: 46 39 53;
+    --c-blue:   36 43 51;
+    --c-pink:   54 37 39;
+    --c-mint:   36 48 38;
+    --c-peach:  54 42 34;
+
+    --shadow-card:  0 6px 20px -6px rgba(0, 0, 0, 0.45), 0 2px 6px -2px rgba(0, 0, 0, 0.35);
+    --shadow-float: 0 18px 44px -14px rgba(0, 0, 0, 0.60), 0 6px 14px -6px rgba(0, 0, 0, 0.40);
+  }
 }
 
 html, body {
@@ -70,6 +111,7 @@ body {
 h1, h2, h3 {
   letter-spacing: 0;
   word-spacing: 0.02em;
+  text-wrap: balance;
 }
 
 button { touch-action: manipulation; }
@@ -82,7 +124,8 @@ button { touch-action: manipulation; }
 }
 
 /* ── Motion ───────────────────────────────────────────────────────────────────
-   Strong ease-out for entrances; specify exact properties — never `all`. */
+   Strong ease-out for entrances; specify exact properties — never `all`.
+   Press feedback everywhere is active:scale-[0.97]; one value, one voice. */
 
 @keyframes count-pop {
   from { transform: scale(1.18); filter: blur(0.5px); opacity: 0.7; }
@@ -108,7 +151,7 @@ button { touch-action: manipulation; }
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 2.5px solid rgba(30, 41, 59, 0.15);
+  border: 2.5px solid rgb(var(--ink) / 0.15);
   border-top-color: rgb(var(--accent));
   animation: loader-spin 0.7s linear infinite;
 }

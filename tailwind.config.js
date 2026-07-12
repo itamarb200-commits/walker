@@ -1,18 +1,21 @@
 /** @type {import('tailwindcss').Config} */
-// Walker design system — "Bright & Playful", ported from the Milo family app.
-// All semantic colors are RGB triplets in globals.css so Tailwind opacity
-// modifiers (e.g. bg-accent/10) keep working.
+// Walker design system — "Hearth": warm coral + golden highlight on clean
+// near-white / warm-espresso neutrals. All semantic colors are RGB triplets
+// in globals.css so Tailwind opacity modifiers (e.g. bg-accent/10) keep
+// working, and dark mode flips automatically via prefers-color-scheme —
+// components never use dark: variants.
 module.exports = {
   content: [
     "./app/**/*.{js,jsx}",
     "./components/**/*.{js,jsx}",
+    "./lib/**/*.{js,jsx}", // person-colors.js holds the literal pal-N class lookups
   ],
-  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
-        // Assistant covers both Hebrew and Latin cleanly (400–800).
-        sans: ["Assistant", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        // Rubik: rounded terminals (warm), excellent Hebrew + Latin coverage.
+        // Loaded via next/font in app/layout.js → --font-rubik.
+        sans: ["var(--font-rubik)", "Rubik", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
       },
       colors: {
         // ── Semantic tokens (defined in globals.css) ──
@@ -27,7 +30,9 @@ module.exports = {
         "highlight-fg": "rgb(var(--highlight-fg) / <alpha-value>)",
         success:   "rgb(var(--success) / <alpha-value>)",
         danger:    "rgb(var(--danger) / <alpha-value>)",
+        knob:      "rgb(var(--knob) / <alpha-value>)",        // switch knob
         line:      "var(--line)",                             // hairline border
+        scrim:     "var(--scrim)",                            // sheet backdrop
 
         // Dynamic person palette — assigned to family members by index.
         "pal-1": "rgb(var(--pal-1) / <alpha-value>)",
@@ -39,7 +44,7 @@ module.exports = {
         "pal-7": "rgb(var(--pal-7) / <alpha-value>)",
         "pal-8": "rgb(var(--pal-8) / <alpha-value>)",
 
-        // Bento pastel surfaces (task-card tints)
+        // Card tints (task cards & charts)
         "c-yellow": "rgb(var(--c-yellow) / <alpha-value>)",
         "c-purple": "rgb(var(--c-purple) / <alpha-value>)",
         "c-blue":   "rgb(var(--c-blue) / <alpha-value>)",
@@ -59,6 +64,7 @@ module.exports = {
       },
       borderRadius: {
         card: "28px",
+        tile: "24px",
         btn:  "18px",
         pill: "999px",
       },
@@ -67,8 +73,7 @@ module.exports = {
         float: "var(--shadow-float)",
       },
       transitionTimingFunction: {
-        out:    "cubic-bezier(0.23, 1, 0.32, 1)",
-        drawer: "cubic-bezier(0.32, 0.72, 0, 1)",
+        out: "cubic-bezier(0.23, 1, 0.32, 1)",
       },
       spacing: {
         "safe-b": "env(safe-area-inset-bottom)",

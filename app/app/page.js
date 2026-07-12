@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, BarChart3, Settings } from "lucide-react";
+import { Sun, CalendarDays, BarChart3, Settings } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { getMyContext } from "@/lib/family";
 import { supabaseBrowser } from "@/lib/supabase/client";
@@ -16,7 +16,7 @@ import StatsBoard from "@/components/StatsBoard";
 import SettingsBoard from "@/components/SettingsBoard";
 
 const TABS = [
-  { key: "today", labelKey: "nav.today", Icon: null },
+  { key: "today", labelKey: "nav.today", Icon: Sun },
   { key: "week", labelKey: "nav.week", Icon: CalendarDays },
   { key: "stats", labelKey: "nav.stats", Icon: BarChart3 },
   { key: "settings", labelKey: "nav.settings", Icon: Settings },
@@ -65,18 +65,29 @@ export default function AppHome() {
         {tab === "settings" && <SettingsBoard ctx={ctx} />}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md items-center justify-around border-t border-line bg-surface/95 px-4 pb-safe-b pt-2 backdrop-blur-md">
-        {TABS.map((tb) => (
-          <button
-            key={tb.key}
-            onClick={() => setTab(tb.key)}
-            className={`flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 rounded-btn text-cap font-semibold transition-colors ${
-              tab === tb.key ? "text-accent" : "text-ink2"
-            }`}
-          >
-            {t(tb.labelKey)}
-          </button>
-        ))}
+      <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md items-center justify-around border-t border-line bg-surface/95 px-3 pb-safe-b pt-2 backdrop-blur-md">
+        {TABS.map((tb) => {
+          const active = tab === tb.key;
+          return (
+            <button
+              key={tb.key}
+              onClick={() => setTab(tb.key)}
+              aria-current={active ? "page" : undefined}
+              className={`flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 rounded-btn text-cap font-semibold transition-colors active:scale-[0.97] ${
+                active ? "text-accent" : "text-ink2"
+              }`}
+            >
+              <span
+                className={`flex h-7 items-center justify-center rounded-pill px-4 transition-colors ${
+                  active ? "bg-accent/10" : "bg-transparent"
+                }`}
+              >
+                <tb.Icon size={19} strokeWidth={active ? 2.4 : 2} />
+              </span>
+              {t(tb.labelKey)}
+            </button>
+          );
+        })}
       </nav>
     </div>
   );

@@ -42,8 +42,8 @@
 
   "onboard.title": "Let's get started",
   "onboard.subtitle": "Create a new family or join an existing one",
-  "onboard.createFamily": "✨ Create a new family",
-  "onboard.joinFamily": "👥 Join an existing family",
+  "onboard.createFamily": "Create a new family",
+  "onboard.joinFamily": "Join an existing family",
   "onboard.createFamily.title": "Create a family",
   "onboard.joinFamily.title": "Join a family",
   "onboard.createFamily.subtitle": "Give your group a name",
@@ -61,9 +61,9 @@
   "onboard.pets.add": "+ Add a pet",
   "onboard.tasks.title": "Choose your tasks",
   "onboard.tasks.subtitle": "Which chores do you want to track?",
-  "onboard.tasks.walks": "🚶 Walks (3x a day)",
-  "onboard.tasks.feeds": "🥗 Feedings (2x a day)",
-  "onboard.tasks.meds": "💊 Medication",
+  "onboard.tasks.walks": "Walks (3x a day)",
+  "onboard.tasks.feeds": "Feedings (2x a day)",
+  "onboard.tasks.meds": "Medication",
   "onboard.finish": "Finish 🎉",
 
   "template.walks.label": "Walk",
@@ -76,6 +76,11 @@
 
   "today.title": "Today",
   "today.empty": "No tasks set up yet",
+  "today.emptyHint": "Add tasks from the Settings tab",
+
+  "icon.paw": "🐾 Paw",
+  "icon.utensils": "🍽️ Feeding",
+  "icon.pill": "💊 Medication",
 
   "week.title": "This week",
   "week.future": "In {n} weeks",
@@ -91,6 +96,7 @@
   "stats.history": "Recent entries",
   "stats.empty": "No entries yet",
   "stats.help": "Help · ",
+  "stats.leader": "Range leader",
 
   "notify.title": "Reminders",
   "notify.unsupported": "Not supported in this browser",

@@ -6,14 +6,14 @@
 // configuration (3 walks + 2 feeds, or 1 walk + meds, or anything else).
 
 import { useCallback, useEffect, useState } from "react";
-import { Check } from "lucide-react";
+import { Check, ClipboardList } from "lucide-react";
 import { toast } from "sonner";
 import { fetchFamilyBoard, recommendPerson, toggleLog } from "@/lib/family";
 import { TaskIcon } from "@/lib/task-icons";
-import { personBg, personBgSoft, personBorder, personText } from "@/lib/person-colors";
+import { personBg, personBgSoft, personRing, personText } from "@/lib/person-colors";
 import { useI18n } from "@/lib/i18n";
 
-const CARD_TINTS = ["bg-c-blue", "bg-c-mint", "bg-c-peach", "bg-c-purple", "bg-c-pink", "bg-c-yellow"];
+const CARD_TINTS = ["bg-c-peach", "bg-c-mint", "bg-c-blue", "bg-c-yellow", "bg-c-purple", "bg-c-pink"];
 
 export default function TodayBoard({ ctx }) {
   const { t } = useI18n();
@@ -52,8 +52,12 @@ export default function TodayBoard({ ctx }) {
 
   if (board.tasks.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-2 pt-24 text-center">
-        <p className="text-body text-ink2">{t("today.empty")}</p>
+      <div className="flex flex-col items-center gap-3 pt-24 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-tile bg-accent/10 text-accent">
+          <ClipboardList size={26} />
+        </div>
+        <p className="text-body font-semibold">{t("today.empty")}</p>
+        <p className="max-w-[26ch] text-sub text-ink2">{t("today.emptyHint")}</p>
       </div>
     );
   }
@@ -68,15 +72,34 @@ export default function TodayBoard({ ctx }) {
         const eligible = task.eligible_ids.map((id) => personById.get(id)).filter(Boolean);
         const recommendedId = recommendPerson(task, board.recentLogs);
 
+        const slots = task.times.length > 0 ? task.times : [null];
+        const doneCount = slots.filter((slotTime) =>
+          board.logsToday.some(
+            (l) => l.task_id === task.id && l.slot_time === slotTime && !l.is_help
+          )
+        ).length;
+        const allDone = doneCount === slots.length;
+
         return (
           <div key={task.id} className={`rounded-card ${tint} p-5 shadow-card`}>
-            <div className="mb-3 flex items-center gap-2">
-              <TaskIcon icon={task.icon} size={20} className="text-ink" />
-              <h2 className="text-h2">{task.label}</h2>
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <TaskIcon icon={task.icon} size={20} className="text-ink" />
+                <h2 className="text-h2">{task.label}</h2>
+              </div>
+              {/* Progress counter — turns golden when the day's slots are all done */}
+              <span
+                className={`flex min-h-[26px] items-center gap-1 rounded-pill px-2.5 text-cap font-bold tabular-nums transition-colors ${
+                  allDone ? "bg-highlight text-highlight-fg" : "bg-surface/70 text-ink2"
+                }`}
+              >
+                {allDone && <Check size={13} strokeWidth={3} />}
+                {doneCount}/{slots.length}
+              </span>
             </div>
 
             <div className="space-y-2.5">
-              {(task.times.length > 0 ? task.times : [null]).map((slotTime) => {
+              {slots.map((slotTime) => {
                 const entry = board.logsToday.find(
                   (l) => l.task_id === task.id && l.slot_time === slotTime && !l.is_help
                 );
@@ -99,15 +122,15 @@ export default function TodayBoard({ ctx }) {
                             onClick={() => handleTap(task, slotTime, person.id)}
                             disabled={isPending || (doneBy && !isDone)}
                             aria-pressed={isDone}
-                            className={`flex min-h-[40px] items-center gap-1.5 rounded-pill px-3.5 text-sub font-semibold transition-all active:scale-[0.96]
+                            className={`flex min-h-[40px] items-center gap-1.5 rounded-pill px-3.5 text-sub font-semibold transition active:scale-[0.97]
                               disabled:cursor-default
                               ${
                                 isDone
-                                  ? `${personBg(person.color_idx)} text-white`
+                                  ? `${personBg(person.color_idx)} text-knob`
                                   : doneBy
                                   ? "bg-surface2 text-ink2/50"
                                   : isRecommended
-                                  ? `${personBgSoft(person.color_idx)} ${personText(person.color_idx)} border-2 ${personBorder(person.color_idx)}`
+                                  ? `${personBgSoft(person.color_idx)} ${personText(person.color_idx)} ring-2 ring-inset ${personRing(person.color_idx)}`
                                   : "bg-surface2 text-ink2"
                               }`}
                           >

@@ -68,7 +68,7 @@ export default function NotifyToggle() {
       <div className="flex items-center gap-3">
         <span
           className={`flex h-10 w-10 items-center justify-center rounded-btn ${
-            isOn ? "bg-accent/12 text-accent" : "bg-surface2 text-ink2"
+            isOn ? "bg-accent/10 text-accent" : "bg-surface2 text-ink2"
           }`}
         >
           <Icon size={20} strokeWidth={2.2} aria-hidden="true" />
@@ -91,11 +91,11 @@ export default function NotifyToggle() {
             aria-checked={isOn}
             aria-label={t("notify.title")}
             className={`relative h-7 w-12 shrink-0 rounded-pill transition-colors duration-200 ease-out disabled:opacity-50 ${
-              isOn ? "bg-accent" : "bg-surface2"
+              isOn ? "bg-accent" : "bg-ink/15"
             }`}
           >
             <span
-              className="absolute top-1 h-5 w-5 rounded-full bg-white shadow-card"
+              className="absolute top-1 h-5 w-5 rounded-full bg-knob shadow-card"
               style={{
                 left: isOn ? "calc(100% - 1.25rem - 0.25rem)" : "0.25rem",
                 transition: "left 200ms cubic-bezier(0.23,1,0.32,1)",
@@ -110,7 +110,7 @@ export default function NotifyToggle() {
           onClick={sendTest}
           disabled={busy}
           className="mt-3 w-full rounded-btn bg-surface2 py-2.5 text-sub font-semibold text-ink
-                     transition-transform duration-150 ease-out active:scale-[0.98] disabled:opacity-50"
+                     transition-transform duration-150 ease-out active:scale-[0.97] disabled:opacity-50"
         >
           {t("notify.sendTest")}
         </button>

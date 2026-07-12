@@ -42,8 +42,8 @@
 
   "onboard.title": "בואו נתחיל",
   "onboard.subtitle": "בחרו להקים משפחה חדשה או להצטרף לקיימת",
-  "onboard.createFamily": "✨ צרו משפחה חדשה",
-  "onboard.joinFamily": "👥 הצטרפו למשפחה קיימת",
+  "onboard.createFamily": "צרו משפחה חדשה",
+  "onboard.joinFamily": "הצטרפו למשפחה קיימת",
   "onboard.createFamily.title": "צרו משפחה",
   "onboard.joinFamily.title": "הצטרפו למשפחה",
   "onboard.createFamily.subtitle": "תנו שם לקבוצה שלכם",
@@ -61,9 +61,9 @@
   "onboard.pets.add": "+ הוסף חיית חמד",
   "onboard.tasks.title": "בחרו משימות",
   "onboard.tasks.subtitle": "אילו טיפולים תעקבו אחריהם?",
-  "onboard.tasks.walks": "🚶 טיולים (3 פעמים ביום)",
-  "onboard.tasks.feeds": "🥗 האכלות (2 פעמים ביום)",
-  "onboard.tasks.meds": "💊 תרופות",
+  "onboard.tasks.walks": "טיולים (3 פעמים ביום)",
+  "onboard.tasks.feeds": "האכלות (2 פעמים ביום)",
+  "onboard.tasks.meds": "תרופות",
   "onboard.finish": "סיום 🎉",
 
   "template.walks.label": "טיול",
@@ -76,6 +76,11 @@
 
   "today.title": "היום",
   "today.empty": "עדיין אין משימות מוגדרות",
+  "today.emptyHint": "מוסיפים משימות בלשונית ההגדרות",
+
+  "icon.paw": "🐾 כף רגל",
+  "icon.utensils": "🍽️ האכלה",
+  "icon.pill": "💊 תרופה",
 
   "week.title": "השבוע",
   "week.future": "בעוד {n} שבועות",
@@ -91,6 +96,7 @@
   "stats.history": "הוצאות אחרונות",
   "stats.empty": "אין עדיין רישומים",
   "stats.help": "עזרה · ",
+  "stats.leader": "מוביל התקופה",
 
   "notify.title": "תזכורות",
   "notify.unsupported": "לא נתמך בדפדפן הזה",

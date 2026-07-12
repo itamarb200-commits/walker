@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Copy, Plus, Trash2, LogOut, ChevronDown, ChevronUp } from "lucide-react";
+import { Copy, Plus, Trash2, LogOut, ChevronDown, ChevronUp, Globe } from "lucide-react";
 import { toast } from "sonner";
 import {
   fetchSettings, renamePerson, addPet, removePet,
@@ -113,8 +113,9 @@ export default function SettingsBoard({ ctx }) {
         <h1 className="text-h1">{t("nav.settings")}</h1>
         <button
           onClick={() => setLocale(locale === "he" ? "en" : "he")}
-          className="rounded-pill bg-surface2 px-3 py-1.5 text-cap font-semibold text-ink2"
+          className="flex items-center gap-1.5 rounded-pill bg-surface2 px-3 py-1.5 text-cap font-semibold text-ink2 active:scale-[0.97]"
         >
+          <Globe size={14} />
           {t("locale.switch")}
         </button>
       </div>
@@ -124,7 +125,7 @@ export default function SettingsBoard({ ctx }) {
         <p className="mb-2 text-cap text-ink2">{t("settings.invite.hint")}</p>
         <button
           onClick={copyInvite}
-          className="flex min-h-[48px] w-full items-center justify-between rounded-btn bg-surface2 px-4 font-mono text-body font-bold text-ink transition-transform active:scale-[0.98]"
+          className="flex min-h-[48px] w-full items-center justify-between rounded-btn bg-surface2 px-4 font-mono text-body font-bold tracking-wider text-ink transition-transform active:scale-[0.97]"
         >
           {data.family?.invite_code}
           <Copy size={18} className="text-ink2" />
@@ -177,7 +178,7 @@ export default function SettingsBoard({ ctx }) {
               <option key={s} value={s}>{t(`species.${s}`)}</option>
             ))}
           </select>
-          <button onClick={handleAddPet} className="rounded-btn bg-accent px-3 text-accent-fg active:scale-95">
+          <button onClick={handleAddPet} className="rounded-btn bg-accent px-3 text-accent-fg active:scale-[0.97]">
             <Plus size={18} />
           </button>
         </div>
@@ -239,7 +240,7 @@ export default function SettingsBoard({ ctx }) {
 
       <button
         onClick={handleSignOut}
-        className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-btn border border-line text-body font-semibold text-danger active:scale-[0.98]"
+        className="mt-2 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-btn border border-danger/25 bg-danger/5 text-body font-semibold text-danger active:scale-[0.97]"
       >
         <LogOut size={18} />
         {t("settings.signOut")}
@@ -298,7 +299,7 @@ function TaskEditor({ task, persons, familyId, isNew, onClose, onSaved, onDelete
 
       <div className="flex gap-2">
         <select value={icon} onChange={(e) => setIcon(e.target.value)} className="rounded-btn border border-line bg-surface px-2 py-2 text-cap">
-          {ICON_OPTIONS.map((i) => <option key={i} value={i}>{i}</option>)}
+          {ICON_OPTIONS.map((i) => <option key={i} value={i}>{t(`icon.${i}`)}</option>)}
         </select>
         <input
           value={timesText}
@@ -313,8 +314,8 @@ function TaskEditor({ task, persons, familyId, isNew, onClose, onSaved, onDelete
           <button
             key={p.id}
             onClick={() => toggleEligible(p.id)}
-            className={`rounded-pill px-3 py-1.5 text-cap font-semibold transition-colors ${
-              eligible.has(p.id) ? `${personBg(p.color_idx)} text-white` : "bg-surface2 text-ink2"
+            className={`rounded-pill px-3 py-1.5 text-cap font-semibold transition-colors active:scale-[0.97] ${
+              eligible.has(p.id) ? `${personBg(p.color_idx)} text-knob` : "bg-surface2 text-ink2"
             }`}
           >
             {p.name}

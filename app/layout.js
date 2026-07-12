@@ -1,6 +1,15 @@
 import "./globals.css";
+import { Rubik } from "next/font/google";
 import { Toaster } from "sonner";
 import { I18nProvider } from "@/lib/i18n";
+
+// Rubik (variable): rounded terminals for the warm family voice, full
+// Hebrew + Latin coverage. Exposed as --font-rubik for Tailwind's font-sans.
+const rubik = Rubik({
+  subsets: ["hebrew", "latin"],
+  display: "swap",
+  variable: "--font-rubik",
+});
 
 export const metadata = {
   title: "Walker — תורנות טיפול בחיות",
@@ -25,14 +34,17 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: "cover",
-  themeColor: "#F7F9FC",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FAFAF9" },
+    { media: "(prefers-color-scheme: dark)", color: "#1B1917" },
+  ],
 };
 
 export default function RootLayout({ children }) {
   // Hebrew RTL is the SSR default; I18nProvider re-stamps lang/dir on the
   // client when the stored preference differs.
   return (
-    <html lang="he" dir="rtl">
+    <html lang="he" dir="rtl" className={rubik.variable}>
       <body className="bg-bg font-sans text-ink antialiased">
         <I18nProvider>
           {children}
@@ -41,7 +53,7 @@ export default function RootLayout({ children }) {
             richColors
             closeButton={false}
             toastOptions={{
-              style: { fontFamily: "Assistant, sans-serif", borderRadius: "16px" },
+              style: { fontFamily: "var(--font-rubik), Rubik, sans-serif", borderRadius: "18px" },
             }}
           />
         </I18nProvider>

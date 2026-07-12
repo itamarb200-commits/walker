@@ -1,11 +1,80 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useI18n } from "@/lib/i18n";
-import { Mail } from "lucide-react";
+import { Mail, PawPrint } from "lucide-react";
 import { toast } from "sonner";
+
+const CODE_LENGTH = 6;
+
+// Six separate digit boxes: numeric keyboard, auto-advance, backspace steps
+// back, paste fills the whole code. Submits automatically on the last digit.
+function CodeInput({ value, onChange, onComplete, disabled }) {
+  const refs = useRef([]);
+  const digits = Array.from({ length: CODE_LENGTH }, (_, i) => value[i] || "");
+
+  const commit = (next) => {
+    const clean = next.slice(0, CODE_LENGTH);
+    onChange(clean);
+    if (clean.length === CODE_LENGTH) onComplete(clean);
+  };
+
+  const handleChange = (i, raw) => {
+    const ch = raw.replace(/\D/g, "");
+    if (!ch) return;
+    const next = value.slice(0, i) + ch + value.slice(i + ch.length);
+    commit(next);
+    const focusIdx = Math.min(i + ch.length, CODE_LENGTH - 1);
+    refs.current[focusIdx]?.focus();
+  };
+
+  const handleKeyDown = (i, e) => {
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      if (digits[i]) {
+        onChange(value.slice(0, i) + value.slice(i + 1));
+      } else if (i > 0) {
+        onChange(value.slice(0, i - 1) + value.slice(i));
+        refs.current[i - 1]?.focus();
+      }
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "");
+    if (pasted) commit(pasted);
+  };
+
+  return (
+    // OTP digits always flow left-to-right, matching how the number reads
+    <div dir="ltr" className="flex justify-center gap-2">
+      {digits.map((d, i) => (
+        <input
+          key={i}
+          ref={(el) => (refs.current[i] = el)}
+          type="text"
+          inputMode="numeric"
+          autoComplete={i === 0 ? "one-time-code" : "off"}
+          maxLength={CODE_LENGTH}
+          value={d}
+          disabled={disabled}
+          autoFocus={i === 0}
+          onChange={(e) => handleChange(i, e.target.value)}
+          onKeyDown={(e) => handleKeyDown(i, e)}
+          onPaste={handlePaste}
+          onFocus={(e) => e.target.select()}
+          aria-label={`digit ${i + 1}`}
+          className="h-14 w-12 rounded-btn border border-line bg-surface text-center text-h2 font-bold tabular-nums text-ink
+                     outline-none transition-colors disabled:opacity-50
+                     focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent"
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function AuthPage() {
   const router = useRouter();
@@ -40,17 +109,19 @@ export default function AuthPage() {
     }
   };
 
-  const handleVerifyCode = async () => {
-    if (!code.trim()) return;
+  const handleVerifyCode = async (fullCode) => {
+    const token = (fullCode ?? code).trim();
+    if (token.length < CODE_LENGTH || isLoading) return;
     setIsLoading(true);
     const { error } = await supabaseBrowser().auth.verifyOtp({
       email,
-      token: code,
+      token,
       type: "email",
     });
     setIsLoading(false);
     if (error) {
       toast.error(error.message);
+      setCode("");
     } else {
       router.push("/onboard");
     }
@@ -68,7 +139,10 @@ export default function AuthPage() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-8 px-6 pb-safe-b pt-10">
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-3">
+        <span className="flex h-16 w-16 items-center justify-center rounded-tile bg-accent text-accent-fg shadow-card">
+          <PawPrint size={32} strokeWidth={2.2} aria-hidden="true" />
+        </span>
         <h1 className="text-h1">{t("app.name")}</h1>
         <p className="text-sub text-ink2">{t("app.tagline")}</p>
       </div>
@@ -143,23 +217,18 @@ export default function AuthPage() {
             e.preventDefault();
             handleVerifyCode();
           }}
-          className="w-full space-y-3"
+          className="w-full space-y-4"
         >
           <p className="text-center text-body text-ink2">{t("auth.enterCode")}</p>
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder={t("auth.codePlaceholder")}
+          <CodeInput
             value={code}
-            onChange={(e) => setCode(e.target.value)}
+            onChange={setCode}
+            onComplete={handleVerifyCode}
             disabled={isLoading}
-            autoFocus
-            className="w-full rounded-btn border border-line bg-surface px-4 py-3 text-center text-h2 tracking-[0.3em] outline-none placeholder:text-ink2
-                       disabled:opacity-50 focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent"
           />
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || code.length < CODE_LENGTH}
             className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-btn bg-accent px-4 text-body font-bold text-accent-fg
                        disabled:opacity-70 transition-transform duration-150 active:scale-[0.97]"
           >

@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { useI18n } from "@/lib/i18n";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Sparkles, Users, X, Check } from "lucide-react";
+import { TaskIcon } from "@/lib/task-icons";
 import { toast } from "sonner";
 
 const STEPS = {
@@ -210,20 +211,26 @@ export default function OnboardPage() {
               setChoice("create");
               setStep(STEPS.FAMILY);
             }}
-            className="rounded-btn border-2 border-accent bg-accent/5 px-6 py-4 text-body font-semibold text-accent
+            className="flex items-center gap-4 rounded-tile border-2 border-accent bg-accent/5 px-5 py-4 text-start
                        transition-transform active:scale-[0.97]"
           >
-            {t("onboard.createFamily")}
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-btn bg-accent text-accent-fg">
+              <Sparkles size={22} aria-hidden="true" />
+            </span>
+            <span className="text-body font-semibold text-accent">{t("onboard.createFamily")}</span>
           </button>
           <button
             onClick={() => {
               setChoice("join");
               setStep(STEPS.FAMILY);
             }}
-            className="rounded-btn border-2 border-line px-6 py-4 text-body font-semibold text-ink
+            className="flex items-center gap-4 rounded-tile border-2 border-line px-5 py-4 text-start
                        transition-transform active:scale-[0.97]"
           >
-            {t("onboard.joinFamily")}
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-btn bg-surface2 text-ink2">
+              <Users size={22} aria-hidden="true" />
+            </span>
+            <span className="text-body font-semibold text-ink">{t("onboard.joinFamily")}</span>
           </button>
         </div>
       )}
@@ -322,29 +329,45 @@ export default function OnboardPage() {
           </div>
           <div className="space-y-3 flex-1">
             {pets.map((pet, idx) => (
-              <div key={idx} className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder={t("onboard.pets.namePlaceholder")}
-                  value={pet.name}
-                  onChange={(e) => updatePet(idx, "name", e.target.value)}
-                  className="flex-1 rounded-btn border border-line bg-surface px-3 py-2 text-sub"
-                />
-                <select
-                  value={pet.species}
-                  onChange={(e) => updatePet(idx, "species", e.target.value)}
-                  className="rounded-btn border border-line bg-surface px-3 py-2 text-sub"
-                >
-                  <option value="dog">{t("species.dog")}</option>
-                  <option value="cat">{t("species.cat")}</option>
-                  <option value="other">{t("species.other")}</option>
-                </select>
-                <button
-                  onClick={() => removePet(idx)}
-                  className="rounded-btn bg-danger/10 px-3 py-2 text-danger font-semibold"
-                >
-                  ✕
-                </button>
+              <div key={idx} className="space-y-2 rounded-btn border border-line bg-surface p-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder={t("onboard.pets.namePlaceholder")}
+                    value={pet.name}
+                    onChange={(e) => updatePet(idx, "name", e.target.value)}
+                    className="flex-1 rounded-btn bg-surface2 px-3 py-2 text-sub outline-none focus-visible:outline-2 focus-visible:outline-accent"
+                  />
+                  <button
+                    onClick={() => removePet(idx)}
+                    aria-label={t("common.remove")}
+                    className="rounded-btn p-2 text-danger active:scale-[0.97]"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  {[
+                    { value: "dog", emoji: "🐕" },
+                    { value: "cat", emoji: "🐈" },
+                    { value: "other", emoji: "🐾" },
+                  ].map((sp) => (
+                    <button
+                      key={sp.value}
+                      type="button"
+                      onClick={() => updatePet(idx, "species", sp.value)}
+                      aria-pressed={pet.species === sp.value}
+                      className={`flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-pill text-sub font-semibold transition-colors active:scale-[0.97] ${
+                        pet.species === sp.value
+                          ? "bg-accent/10 text-accent ring-2 ring-inset ring-accent"
+                          : "bg-surface2 text-ink2"
+                      }`}
+                    >
+                      <span aria-hidden="true">{sp.emoji}</span>
+                      {t(`species.${sp.value}`)}
+                    </button>
+                  ))}
+                </div>
               </div>
             ))}
             <button
@@ -384,29 +407,34 @@ export default function OnboardPage() {
           </div>
           <div className="space-y-2 flex-1">
             {[
-              { id: "walks", label: t("onboard.tasks.walks") },
-              { id: "feeds", label: t("onboard.tasks.feeds") },
-              { id: "meds", label: t("onboard.tasks.meds") },
-            ].map((task) => (
-              <button
-                key={task.id}
-                onClick={() =>
-                  setSelectedTasks(
-                    selectedTasks.includes(task.id)
-                      ? selectedTasks.filter((t) => t !== task.id)
-                      : [...selectedTasks, task.id]
-                  )
-                }
-                className={`w-full rounded-btn px-4 py-3 text-body font-semibold transition-all ${
-                  selectedTasks.includes(task.id)
-                    ? "bg-accent text-accent-fg border-2 border-accent"
-                    : "border-2 border-line text-ink hover:border-accent/50"
-                }`}
-              >
-                {selectedTasks.includes(task.id) ? "✓ " : ""}
-                {task.label}
-              </button>
-            ))}
+              { id: "walks", icon: "paw", label: t("onboard.tasks.walks") },
+              { id: "feeds", icon: "utensils", label: t("onboard.tasks.feeds") },
+              { id: "meds", icon: "pill", label: t("onboard.tasks.meds") },
+            ].map((task) => {
+              const selected = selectedTasks.includes(task.id);
+              return (
+                <button
+                  key={task.id}
+                  onClick={() =>
+                    setSelectedTasks(
+                      selected
+                        ? selectedTasks.filter((t) => t !== task.id)
+                        : [...selectedTasks, task.id]
+                    )
+                  }
+                  aria-pressed={selected}
+                  className={`flex w-full items-center gap-3 rounded-btn border-2 px-4 py-3 text-start text-body font-semibold transition-colors active:scale-[0.97] ${
+                    selected
+                      ? "border-accent bg-accent text-accent-fg"
+                      : "border-line text-ink hover:border-accent/50"
+                  }`}
+                >
+                  <TaskIcon icon={task.icon} size={20} aria-hidden="true" />
+                  <span className="flex-1">{task.label}</span>
+                  {selected && <Check size={18} strokeWidth={3} aria-hidden="true" />}
+                </button>
+              );
+            })}
           </div>
           <div className="flex gap-3">
             <button

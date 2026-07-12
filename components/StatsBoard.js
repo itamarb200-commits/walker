@@ -6,6 +6,7 @@
 // fairness *recommendation* on the today/week boards ignores help entries.
 
 import { useCallback, useEffect, useState } from "react";
+import { Crown } from "lucide-react";
 import { dateKey, weekDays, fetchRangeBoard } from "@/lib/family";
 import { personBg } from "@/lib/person-colors";
 import { useI18n } from "@/lib/i18n";
@@ -83,16 +84,21 @@ export default function StatsBoard({ ctx }) {
         <div className="space-y-3">
           {data.persons.map((person) => {
             const count = tally.get(person.id) || 0;
+            const isLeader = count > 0 && count === maxCount;
             return (
               <div key={person.id} className="flex items-center gap-3">
-                <span className="w-16 shrink-0 text-sub font-semibold text-ink">{person.name}</span>
+                <span className="flex w-20 shrink-0 items-center gap-1 text-sub font-semibold text-ink">
+                  {/* One earned golden moment: the range leader wears the crown */}
+                  {isLeader && <Crown size={14} className="shrink-0 fill-highlight text-highlight" aria-label={t("stats.leader")} />}
+                  <span className="truncate">{person.name}</span>
+                </span>
                 <div className="h-6 flex-1 overflow-hidden rounded-pill bg-surface2">
                   <div
-                    className={`h-full rounded-pill ${personBg(person.color_idx)} transition-all duration-300 ease-out`}
+                    className={`h-full rounded-pill ${personBg(person.color_idx)} transition-[width] duration-300 ease-out`}
                     style={{ width: `${(count / maxCount) * 100}%` }}
                   />
                 </div>
-                <span className="w-6 shrink-0 text-end text-sub font-bold text-ink anim-count-pop" key={count}>
+                <span className="w-6 shrink-0 text-end text-sub font-bold tabular-nums text-ink anim-count-pop" key={count}>
                   {count}
                 </span>
               </div>
