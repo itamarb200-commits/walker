@@ -1,11 +1,11 @@
-"""Generate Walker's app icon: a white paw print on the brand coral (#E05137,
+"""Generate Walker's app icon: a white paw print on the brand coral (#CE442D,
 "Hearth" accent), rounded-square background. Run: python scripts/make-app-icon.py
 Outputs 512/192/180(apple-touch)/32(favicon) into public/.
 """
 from PIL import Image, ImageDraw
 import os
 
-ACCENT = (224, 81, 55, 255)   # --accent (Hearth coral)
+ACCENT = (206, 68, 45, 255)   # --accent (Hearth coral)
 WHITE = (255, 255, 255, 255)
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "public")
 

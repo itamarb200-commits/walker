@@ -31,6 +31,7 @@ module.exports = {
         success:   "rgb(var(--success) / <alpha-value>)",
         danger:    "rgb(var(--danger) / <alpha-value>)",
         knob:      "rgb(var(--knob) / <alpha-value>)",        // switch knob
+        "on-pal":  "rgb(var(--on-pal) / <alpha-value>)",      // text on a filled person pill
         line:      "var(--line)",                             // hairline border
         scrim:     "var(--scrim)",                            // sheet backdrop
 

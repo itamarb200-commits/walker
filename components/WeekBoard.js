@@ -156,7 +156,7 @@ export default function WeekBoard({ ctx }) {
                           aria-label={`${row.task.label} ${DAY_LETTERS[day.getDay()]}: ${person ? person.name : t("week.unassigned")}`}
                           className={`flex min-h-[44px] w-full items-center justify-center rounded-btn text-cap font-semibold transition-transform active:scale-[0.97]
                             ${isFuture ? "cursor-default opacity-30" : ""}
-                            ${person ? `${personBg(person.color_idx)} text-knob` : "bg-surface2 text-ink2"}`}
+                            ${person ? `${personBg(person.color_idx)} text-on-pal` : "bg-surface2 text-ink2"}`}
                         >
                           {person ? person.name : "—"}
                         </button>
@@ -209,7 +209,7 @@ export default function WeekBoard({ ctx }) {
                   <button
                     key={person.id}
                     onClick={() => pick(person.id)}
-                    className={`flex min-h-[48px] items-center justify-center gap-2 rounded-btn text-body font-semibold text-knob transition-transform active:scale-[0.97] ${personBg(person.color_idx)}`}
+                    className={`flex min-h-[48px] items-center justify-center gap-2 rounded-btn text-body font-semibold text-on-pal transition-transform active:scale-[0.97] ${personBg(person.color_idx)}`}
                   >
                     {person.name}
                   </button>

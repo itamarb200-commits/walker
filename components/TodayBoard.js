@@ -126,7 +126,7 @@ export default function TodayBoard({ ctx }) {
                               disabled:cursor-default
                               ${
                                 isDone
-                                  ? `${personBg(person.color_idx)} text-knob`
+                                  ? `${personBg(person.color_idx)} text-on-pal`
                                   : doneBy
                                   ? "bg-surface2 text-ink2/50"
                                   : isRecommended

@@ -26,11 +26,12 @@ media query — **components never use `dark:` variants.**
 | `surface` | #FFFFFF | #26221F | cards |
 | `surface2` | #F2EFEC | #332E2A | wells, idle chips |
 | `ink` / `ink2` | #292524 / #69625B | #F2EFEC / #A8A19A | text |
-| `accent` (+`accent-fg`) | #E05137 coral | #F0785C (fg: deep brown) | CTAs, nav, selection, state |
+| `accent` (+`accent-fg`) | #CE442D coral (white text ≥4.7:1) | #F0785C (fg: deep brown) | CTAs, nav, selection, state |
 | `highlight` (+`highlight-fg`) | #F0B429 golden | #F7C948 | **earned** moments only: all-done counter, stats crown |
 | `success` / `danger` | warm green / crimson | brightened | status; danger is deeper than accent so they never read alike |
 | `line` / `scrim` / `knob` | ink 10% / ink 50% / white | white 10% / black 60% / white | hairlines, sheet backdrop, switch knob |
-| `pal-1..8` | 8 warm-harmonized hues | brightened one notch | per-person colors, assigned by join index |
+| `on-pal` | white | near-black (#1B1917) | text on a **filled** person pill — flips per theme so the name always clears 4.5:1 |
+| `pal-1..8` | 8 warm-harmonized hues (≥4.5:1 as text on surface) | brightened for dark-surface legibility | per-person colors, assigned by join index |
 | `c-yellow…c-peach` | warm pastels | deep muted tints | Today card tints |
 
 Person colors go through `lib/person-colors.js` (literal class lookups —

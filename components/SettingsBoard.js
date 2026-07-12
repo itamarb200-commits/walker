@@ -315,7 +315,7 @@ function TaskEditor({ task, persons, familyId, isNew, onClose, onSaved, onDelete
             key={p.id}
             onClick={() => toggleEligible(p.id)}
             className={`rounded-pill px-3 py-1.5 text-cap font-semibold transition-colors active:scale-[0.97] ${
-              eligible.has(p.id) ? `${personBg(p.color_idx)} text-knob` : "bg-surface2 text-ink2"
+              eligible.has(p.id) ? `${personBg(p.color_idx)} text-on-pal` : "bg-surface2 text-ink2"
             }`}
           >
             {p.name}

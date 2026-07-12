@@ -20,7 +20,7 @@
   --surface2:  242 239 236;   /* wells, skeletons, idle chips */
   --ink:        41  37  36;   /* #292524 warm stone — primary type */
   --ink2:      105  98  91;   /* muted warm stone — ≥5:1 on surface */
-  --accent:    224  81  55;   /* #E05137 coral persimmon — actions, selection */
+  --accent:    206  68  45;   /* #CE442D coral persimmon — white text 4.7:1 AA */
   --accent-fg: 255 255 255;
   --highlight: 240 180  41;   /* #F0B429 golden amber — earned moments only */
   --highlight-fg: 61  42  10;
@@ -29,9 +29,11 @@
   --line:      rgba(41, 37, 36, 0.10);
   --scrim:     rgba(41, 37, 36, 0.50);
   --knob:      255 255 255;   /* switch knob — deliberately white in both themes */
+  --on-pal:    255 255 255;   /* text on a filled person pill (white in light) */
 
-  /* Person palette — 8 warm-harmonized hues; all ≥4.3:1 with white chip text. */
-  --pal-1: 214  69 107;    /* rose */
+  /* Person palette — 8 warm-harmonized hues; ≥4.5:1 both as chip text on surface
+     and under white pill text (--on-pal). */
+  --pal-1: 201  58  96;    /* rose */
   --pal-2: 161  98   7;    /* golden */
   --pal-3:  47 125  70;    /* sage */
   --pal-4:  36 114 164;    /* sky */
@@ -69,9 +71,11 @@
     --danger:   241 106  94;
     --line:     rgba(255, 255, 255, 0.10);
     --scrim:    rgba(0, 0, 0, 0.60);
+    --on-pal:    27  25  23;   /* text on a filled person pill (near-black in dark) */
 
-    /* Brightened one notch: ≥4.5:1 as text on --bg, ≥3:1 under white chip text */
-    --pal-1: 224  86 126;
+    /* Brightened for legibility as text on the dark surface (≥4.5:1); filled
+       pills flip to dark --on-pal text rather than white. */
+    --pal-1: 230  96 136;
     --pal-2: 199 127  19;
     --pal-3:  59 158  88;
     --pal-4:  51 144 204;

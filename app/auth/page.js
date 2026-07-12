@@ -67,7 +67,7 @@ function CodeInput({ value, onChange, onComplete, disabled }) {
           onPaste={handlePaste}
           onFocus={(e) => e.target.select()}
           aria-label={`digit ${i + 1}`}
-          className="h-14 w-12 rounded-btn border border-line bg-surface text-center text-h2 font-bold tabular-nums text-ink
+          className="h-14 w-11 rounded-btn border border-line bg-surface text-center text-h2 font-bold tabular-nums text-ink
                      outline-none transition-colors disabled:opacity-50
                      focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent"
         />
