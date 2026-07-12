@@ -34,7 +34,11 @@
   "auth.continueGoogle": "Continue with Google",
   "auth.terms": "By continuing, you agree to our terms.",
   "auth.enterEmail": "Enter your email",
-  "auth.checkEmail": "Check your email for a sign-in link",
+  "auth.checkEmail": "We sent you a code — check your email",
+  "auth.enterCode": "Enter the 6-digit code",
+  "auth.codePlaceholder": "123456",
+  "auth.verifyCode": "Verify code",
+  "auth.changeEmail": "Change email",
 
   "onboard.title": "Let's get started",
   "onboard.subtitle": "Create a new family or join an existing one",

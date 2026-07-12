@@ -34,7 +34,11 @@
   "auth.continueGoogle": "המשך עם Google",
   "auth.terms": "על ידי כניסה, אתה מסכים לתנאים שלנו.",
   "auth.enterEmail": "הזן אימייל",
-  "auth.checkEmail": "בדוק את האימייל שלך לקישור כניסה",
+  "auth.checkEmail": "שלחנו לך קוד — בדוק את האימייל",
+  "auth.enterCode": "הזן את הקוד בן 6 הספרות",
+  "auth.codePlaceholder": "123456",
+  "auth.verifyCode": "אמת קוד",
+  "auth.changeEmail": "שנה כתובת מייל",
 
   "onboard.title": "בואו נתחיל",
   "onboard.subtitle": "בחרו להקים משפחה חדשה או להצטרף לקיימת",
