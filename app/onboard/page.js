@@ -206,14 +206,20 @@ export default function OnboardPage() {
             <p className="text-body text-ink2">{t("onboard.subtitle")}</p>
           </div>
           <button
-            onClick={() => setChoice("create")}
+            onClick={() => {
+              setChoice("create");
+              setStep(STEPS.FAMILY);
+            }}
             className="rounded-btn border-2 border-accent bg-accent/5 px-6 py-4 text-body font-semibold text-accent
                        transition-transform active:scale-[0.97]"
           >
             {t("onboard.createFamily")}
           </button>
           <button
-            onClick={() => setChoice("join")}
+            onClick={() => {
+              setChoice("join");
+              setStep(STEPS.FAMILY);
+            }}
             className="rounded-btn border-2 border-line px-6 py-4 text-body font-semibold text-ink
                        transition-transform active:scale-[0.97]"
           >
