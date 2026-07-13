@@ -39,6 +39,9 @@
   "auth.codePlaceholder": "123456",
   "auth.verifyCode": "Verify code",
   "auth.changeEmail": "Change email",
+  "auth.rateLimited": "You can request a new code in {n} seconds",
+  "auth.sendFailed": "Couldn't send the code, please try again",
+  "auth.verifyFailed": "Wrong or expired code, please try again",
 
   "onboard.title": "Let's get started",
   "onboard.subtitle": "Create a new family or join an existing one",

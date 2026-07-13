@@ -39,6 +39,9 @@
   "auth.codePlaceholder": "123456",
   "auth.verifyCode": "אמת קוד",
   "auth.changeEmail": "שנה כתובת מייל",
+  "auth.rateLimited": "אפשר לבקש קוד חדש בעוד {n} שניות",
+  "auth.sendFailed": "שליחת הקוד נכשלה, נסו שוב",
+  "auth.verifyFailed": "קוד שגוי או שפג תוקפו, נסו שוב",
 
   "onboard.title": "בואו נתחיל",
   "onboard.subtitle": "בחרו להקים משפחה חדשה או להצטרף לקיימת",

@@ -102,7 +102,8 @@ export default function AuthPage() {
     const { error } = await supabaseBrowser().auth.signInWithOtp({ email });
     setIsLoading(false);
     if (error) {
-      toast.error(error.message);
+      const waitSec = error.message?.match(/after (\d+) seconds/)?.[1];
+      toast.error(waitSec ? t("auth.rateLimited", { n: waitSec }) : t("auth.sendFailed"));
     } else {
       toast.success(t("auth.checkEmail"));
       setStep("code");
@@ -120,7 +121,7 @@ export default function AuthPage() {
     });
     setIsLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(t("auth.verifyFailed"));
       setCode("");
     } else {
       router.push("/onboard");
