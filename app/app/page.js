@@ -57,7 +57,7 @@ export default function AppHome() {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-24">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-28">
       <main className="flex-1 px-5 pt-8">
         {tab === "today" && <TodayBoard ctx={ctx} />}
         {tab === "week" && <WeekBoard ctx={ctx} />}
@@ -65,7 +65,12 @@ export default function AppHome() {
         {tab === "settings" && <SettingsBoard ctx={ctx} />}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md items-center justify-around border-t border-line bg-surface/95 px-3 pb-safe-b pt-2 backdrop-blur-md">
+      {/* Floating pill — an independent "island" detached from the screen
+          edge, rather than a bar fused to the bottom of the viewport. */}
+      <nav
+        className="fixed inset-x-4 z-40 mx-auto flex max-w-[416px] items-center justify-around rounded-pill bg-surface px-2 py-1.5 shadow-float"
+        style={{ bottom: "max(env(safe-area-inset-bottom), 16px)" }}
+      >
         {TABS.map((tb) => {
           const active = tab === tb.key;
           return (
@@ -73,7 +78,7 @@ export default function AppHome() {
               key={tb.key}
               onClick={() => setTab(tb.key)}
               aria-current={active ? "page" : undefined}
-              className={`flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 rounded-btn text-cap font-semibold transition-colors active:scale-[0.97] ${
+              className={`flex min-h-[48px] flex-1 flex-col items-center justify-center gap-0.5 rounded-pill text-cap font-semibold transition-colors active:scale-[0.97] ${
                 active ? "text-accent" : "text-ink2"
               }`}
             >

@@ -74,7 +74,9 @@
   "species.cat": "חתול",
   "species.other": "אחר",
 
-  "today.title": "היום",
+  "today.greeting.morning": "בוקר טוב",
+  "today.greeting.afternoon": "צהריים טובים",
+  "today.greeting.evening": "ערב טוב",
   "today.empty": "עדיין אין משימות מוגדרות",
   "today.emptyHint": "מוסיפים משימות בלשונית ההגדרות",
 

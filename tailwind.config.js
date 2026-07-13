@@ -60,8 +60,8 @@ module.exports = {
         sub:     ["15px",   { lineHeight: "23px" }],
         body:    ["17px",   { lineHeight: "27px" }],
         h2:      ["22px",   { lineHeight: "30px", letterSpacing: "normal", fontWeight: "600" }],
-        h1:      ["28px",   { lineHeight: "37px", letterSpacing: "normal", fontWeight: "700" }],
-        display: ["36px",   { lineHeight: "44px", letterSpacing: "normal", fontWeight: "700" }],
+        h1:      ["28px",   { lineHeight: "37px", letterSpacing: "normal", fontWeight: "800" }],
+        display: ["36px",   { lineHeight: "44px", letterSpacing: "normal", fontWeight: "800" }],
       },
       borderRadius: {
         card: "28px",

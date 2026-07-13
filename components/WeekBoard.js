@@ -119,13 +119,17 @@ export default function WeekBoard({ ctx }) {
                 {days.map((day) => {
                   const isToday = dateKey(day) === today;
                   return (
-                    <th
-                      key={day.toISOString()}
-                      className={`p-2 text-center font-semibold ${
-                        isToday ? "rounded-t-btn bg-accent/5 text-accent" : "text-ink2"
-                      }`}
-                    >
-                      {DAY_LETTERS[day.getDay()]} {day.getDate()}
+                    <th key={day.toISOString()} className="p-1.5 text-center">
+                      {/* Day-strip capsule (Moonly-inspired): letter + a bigger
+                          date number, today filled solid instead of tinted. */}
+                      <div
+                        className={`mx-auto flex w-10 flex-col items-center gap-0.5 rounded-pill py-1.5 ${
+                          isToday ? "bg-accent text-accent-fg" : "text-ink2"
+                        }`}
+                      >
+                        <span className="text-[10px] font-semibold opacity-80">{DAY_LETTERS[day.getDay()]}</span>
+                        <span className="text-body font-extrabold tabular-nums leading-none">{day.getDate()}</span>
+                      </div>
                     </th>
                   );
                 })}

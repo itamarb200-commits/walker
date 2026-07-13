@@ -74,7 +74,9 @@
   "species.cat": "Cat",
   "species.other": "Other",
 
-  "today.title": "Today",
+  "today.greeting.morning": "Good morning",
+  "today.greeting.afternoon": "Good afternoon",
+  "today.greeting.evening": "Good evening",
   "today.empty": "No tasks set up yet",
   "today.emptyHint": "Add tasks from the Settings tab",
 

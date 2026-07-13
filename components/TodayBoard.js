@@ -15,6 +15,15 @@ import { useI18n } from "@/lib/i18n";
 
 const CARD_TINTS = ["bg-c-peach", "bg-c-mint", "bg-c-blue", "bg-c-yellow", "bg-c-purple", "bg-c-pink"];
 
+// A small personal touch (Apple Watch's "Good Evening"): the family checks
+// this screen at different points across the day, so greet accordingly.
+function greetingKey() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "today.greeting.morning";
+  if (hour < 18) return "today.greeting.afternoon";
+  return "today.greeting.evening";
+}
+
 export default function TodayBoard({ ctx }) {
   const { t } = useI18n();
   const [board, setBoard] = useState(null);
@@ -66,7 +75,7 @@ export default function TodayBoard({ ctx }) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-h1">{t("today.title")}</h1>
+      <h1 className="text-h1">{t(greetingKey())}</h1>
       {board.tasks.map((task, idx) => {
         const tint = CARD_TINTS[idx % CARD_TINTS.length];
         const eligible = task.eligible_ids.map((id) => personById.get(id)).filter(Boolean);

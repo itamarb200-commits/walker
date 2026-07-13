@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Copy, Plus, Trash2, LogOut, ChevronDown, ChevronUp, Globe } from "lucide-react";
+import { Copy, Plus, Trash2, LogOut, ChevronDown, ChevronUp, Globe, Home, UserRound, PawPrint, ListChecks } from "lucide-react";
 import { toast } from "sonner";
 import {
   fetchSettings, renamePerson, addPet, removePet,
@@ -21,10 +21,19 @@ import NotifyToggle from "@/components/NotifyToggle";
 const ICON_OPTIONS = ["paw", "utensils", "pill"];
 const SPECIES_OPTIONS = ["dog", "cat", "other"];
 
-function SectionCard({ title, children }) {
+// Colored icon badge per section — one glance tells you which list you're
+// in, the way a settings app's colored row icons do.
+function SectionCard({ title, icon: Icon, tint, children }) {
   return (
     <div className="rounded-card bg-surface p-5 shadow-card">
-      <h2 className="mb-3 text-h2">{title}</h2>
+      <div className="mb-3 flex items-center gap-2.5">
+        {Icon && (
+          <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-knob ${tint}`}>
+            <Icon size={16} strokeWidth={2.4} />
+          </span>
+        )}
+        <h2 className="text-h2">{title}</h2>
+      </div>
       {children}
     </div>
   );
@@ -121,7 +130,7 @@ export default function SettingsBoard({ ctx }) {
       </div>
 
       {/* Family + invite */}
-      <SectionCard title={data.family?.name || t("settings.family")}>
+      <SectionCard title={data.family?.name || t("settings.family")} icon={Home} tint="bg-accent">
         <p className="mb-2 text-cap text-ink2">{t("settings.invite.hint")}</p>
         <button
           onClick={copyInvite}
@@ -133,7 +142,7 @@ export default function SettingsBoard({ ctx }) {
       </SectionCard>
 
       {/* Members */}
-      <SectionCard title={t("settings.members")}>
+      <SectionCard title={t("settings.members")} icon={UserRound} tint="bg-pal-4">
         <div className="space-y-2">
           {data.persons.map((person) => (
             <div key={person.id} className="flex items-center gap-3">
@@ -149,7 +158,7 @@ export default function SettingsBoard({ ctx }) {
       </SectionCard>
 
       {/* Pets */}
-      <SectionCard title={t("settings.pets")}>
+      <SectionCard title={t("settings.pets")} icon={PawPrint} tint="bg-pal-3">
         <div className="space-y-2">
           {data.pets.map((pet) => (
             <div key={pet.id} className="flex items-center justify-between rounded-btn bg-surface2 px-3 py-2">
@@ -185,7 +194,7 @@ export default function SettingsBoard({ ctx }) {
       </SectionCard>
 
       {/* Tasks */}
-      <SectionCard title={t("settings.tasks")}>
+      <SectionCard title={t("settings.tasks")} icon={ListChecks} tint="bg-pal-5">
         <div className="space-y-2">
           {data.tasks.map((task) =>
             editingTaskId === task.id ? (

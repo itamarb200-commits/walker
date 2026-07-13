@@ -58,9 +58,11 @@
 /* Dark — warm espresso, auto via device setting. Same semantic roles. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg:        27  25  23;    /* #1B1917 */
-    --surface:   38  34  32;
-    --surface2:  51  46  42;
+    /* True-black-warm depth (Apple Watch / Moonly reference): deeper than a
+       mid-brown dark mode, but still warm-tinted, never neutral-gray-black. */
+    --bg:        18  17  16;    /* #121110 */
+    --surface:   28  25  24;    /* #1C1918 */
+    --surface2:  40  35  32;    /* #282320 */
     --ink:      242 239 236;
     --ink2:     168 161 154;
     --accent:   240 120  92;    /* brightened coral */
