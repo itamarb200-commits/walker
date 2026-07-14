@@ -1,9 +1,9 @@
 /** @type {import('tailwindcss').Config} */
-// Walker design system — "Hearth": warm coral + golden highlight on clean
-// near-white / warm-espresso neutrals. All semantic colors are RGB triplets
-// in globals.css so Tailwind opacity modifiers (e.g. bg-accent/10) keep
-// working, and dark mode flips automatically via prefers-color-scheme —
-// components never use dark: variants.
+// Walker design system — "Gouache": saturated painted-paper color fields on a
+// quiet neutral paper canvas, deep ink type, cobalt actions. All semantic
+// colors are RGB triplets in globals.css so Tailwind opacity modifiers
+// (e.g. bg-accent/10) keep working, and dark mode flips automatically via
+// prefers-color-scheme — components never use dark: variants.
 module.exports = {
   content: [
     "./app/**/*.{js,jsx}",
@@ -34,6 +34,11 @@ module.exports = {
         "on-pal":  "rgb(var(--on-pal) / <alpha-value>)",      // text on a filled person pill
         line:      "var(--line)",                             // hairline border
         scrim:     "var(--scrim)",                            // sheet backdrop
+
+        // Gouache fields — set per-card by the .field-N classes (globals.css);
+        // children read the pair through these tokens.
+        "f-fg":    "rgb(var(--f-fg) / <alpha-value>)",        // type on the current field
+        well:      "rgb(var(--well) / <alpha-value>)",        // translucent paper well on a field
 
         // Dynamic person palette — assigned to family members by index.
         "pal-1": "rgb(var(--pal-1) / <alpha-value>)",

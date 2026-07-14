@@ -88,6 +88,22 @@ export default function Landing() {
 
   return (
     <div className="relative mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-6 overflow-hidden px-6 pb-[max(env(safe-area-inset-bottom),24px)] pt-10">
+      {/* Gouache paper cutouts — three painted shapes laid behind the hero.
+          Solid brand paint at whisper opacity so type stays fully readable. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <span
+          className="blob absolute -start-16 top-8 h-56 w-56 rotate-12 opacity-[0.16]"
+          style={{ backgroundColor: "rgb(var(--f1))" }}
+        />
+        <span
+          className="blob-2 absolute -end-20 top-1/3 h-64 w-64 -rotate-6 opacity-[0.14]"
+          style={{ backgroundColor: "rgb(var(--f3))" }}
+        />
+        <span
+          className="blob absolute -bottom-20 start-6 h-60 w-60 rotate-45 opacity-[0.13]"
+          style={{ backgroundColor: "rgb(var(--f4))" }}
+        />
+      </div>
       <PawTrail />
 
       {/* Locale switch */}
@@ -103,7 +119,7 @@ export default function Landing() {
 
       {/* Hero */}
       <motion.div {...entrance(0.05)} className="flex flex-col items-center gap-3 text-center">
-        <span className="flex h-20 w-20 items-center justify-center rounded-tile bg-accent text-accent-fg shadow-float">
+        <span className="blob flex h-20 w-20 items-center justify-center bg-accent text-accent-fg shadow-float">
           <PawPrint size={40} strokeWidth={2.2} aria-hidden="true" />
         </span>
         <h1 className="text-display">{t("app.name")}</h1>

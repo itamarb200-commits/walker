@@ -13,7 +13,10 @@ import { TaskIcon } from "@/lib/task-icons";
 import { personBg, personBgSoft, personRing, personText } from "@/lib/person-colors";
 import { useI18n } from "@/lib/i18n";
 
-const CARD_TINTS = ["bg-c-peach", "bg-c-mint", "bg-c-blue", "bg-c-yellow", "bg-c-purple", "bg-c-pink"];
+// Gouache fields — each task card is a full painted color surface. Cobalt
+// leads (the signature), then the warm/cool alternation keeps neighbors
+// distinct even for color-blind users (paired with the task icon).
+const CARD_FIELDS = ["field-5", "field-1", "field-3", "field-4", "field-2", "field-6"];
 
 // A small personal touch (Apple Watch's "Good Evening"): the family checks
 // this screen at different points across the day, so greet accordingly.
@@ -75,9 +78,9 @@ export default function TodayBoard({ ctx }) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-h1">{t(greetingKey())}</h1>
+      <h1 className="text-display">{t(greetingKey())}</h1>
       {board.tasks.map((task, idx) => {
-        const tint = CARD_TINTS[idx % CARD_TINTS.length];
+        const field = CARD_FIELDS[idx % CARD_FIELDS.length];
         const eligible = task.eligible_ids.map((id) => personById.get(id)).filter(Boolean);
         const recommendedId = recommendPerson(task, board.recentLogs);
 
@@ -90,16 +93,19 @@ export default function TodayBoard({ ctx }) {
         const allDone = doneCount === slots.length;
 
         return (
-          <div key={task.id} className={`rounded-card ${tint} p-5 shadow-card`}>
+          <div key={task.id} className={`field ${field} rounded-card p-5 shadow-card`}>
             <div className="mb-3 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <TaskIcon icon={task.icon} size={20} className="text-ink" />
-                <h2 className="text-h2">{task.label}</h2>
+              <div className="flex items-center gap-2.5">
+                {/* Hand-cut paper blob behind the icon — the field's one flourish */}
+                <span className="blob flex h-10 w-10 shrink-0 items-center justify-center bg-well/25">
+                  <TaskIcon icon={task.icon} size={20} className="text-f-fg" />
+                </span>
+                <h2 className="text-h2 text-f-fg">{task.label}</h2>
               </div>
               {/* Progress counter — turns golden when the day's slots are all done */}
               <span
                 className={`flex min-h-[26px] items-center gap-1 rounded-pill px-2.5 text-cap font-bold tabular-nums transition-colors ${
-                  allDone ? "bg-highlight text-highlight-fg" : "bg-surface/70 text-ink2"
+                  allDone ? "bg-highlight text-highlight-fg" : "bg-well/25 text-f-fg"
                 }`}
               >
                 {allDone && <Check size={13} strokeWidth={3} />}
@@ -117,7 +123,7 @@ export default function TodayBoard({ ctx }) {
                 const isPending = pending === key;
 
                 return (
-                  <div key={key} className="rounded-btn bg-surface/70 p-3">
+                  <div key={key} className="rounded-btn bg-well/85 p-3">
                     {slotTime && (
                       <div className="mb-2 text-cap font-semibold text-ink2">{slotTime}</div>
                     )}

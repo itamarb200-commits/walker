@@ -2,102 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Walker design system — "Hearth" ──────────────────────────────────────────
-   Warm & family. Near-white neutral surfaces (never cream); the warmth is
-   carried by the coral accent, the golden highlight, and the card tints.
-   • Restrained inside the app: accent = actions, selection, state only.
-   • --highlight (golden amber) is scarce: completion, the weekly leader.
+/* ── Walker design system — "Gouache" ─────────────────────────────────────────
+   Painted paper. The canvas is a quiet neutral paper; identity comes from
+   full saturated color fields (task cards, hero shapes) laid on it like
+   hand-cut painted paper, with deep ink type and a cobalt action color.
+   • Fields carry the color (committed); chrome stays restrained ink/paper.
+   • --highlight (sunflower) stays scarce: completion, the weekly crown.
    Family members get a hue from --pal-N, assigned by join order.
    All semantic colors are RGB triplets so Tailwind alpha modifiers work.
-   Dark mode is automatic: every token flips under prefers-color-scheme,
-   so components never need dark: variants.
+   Dark mode ("paper on a dark table") flips automatically via
+   prefers-color-scheme — components never need dark: variants.
    Text pairs verified for WCAG AA (body ≥4.5:1, large/bold ≥3:1). */
 
 :root {
-  /* Core palette — light */
-  --bg:        250 250 249;   /* #FAFAF9 clean near-white */
+  /* Core palette — light (paper) */
+  --bg:        244 244 241;   /* neutral paper, chroma ≈ 0 — never cream */
   --surface:   255 255 255;   /* card */
-  --surface2:  242 239 236;   /* wells, skeletons, idle chips */
-  --ink:        41  37  36;   /* #292524 warm stone — primary type */
-  --ink2:      105  98  91;   /* muted warm stone — ≥5:1 on surface */
-  --accent:    206  68  45;   /* #CE442D coral persimmon — white text 4.7:1 AA */
+  --surface2:  233 233 228;   /* wells, skeletons, idle chips */
+  --ink:        37  35  54;   /* #252336 deep ink-indigo — primary type */
+  --ink2:      104 102 124;   /* muted ink — ≥4.5:1 on surface */
+  --accent:     42  87 199;   /* #2A57C7 cobalt — white text ≥5.4:1 AA */
   --accent-fg: 255 255 255;
-  --highlight: 240 180  41;   /* #F0B429 golden amber — earned moments only */
-  --highlight-fg: 61  42  10;
-  --success:    26 127  60;   /* warm green */
-  --danger:    190  34  42;   /* crimson — deeper than accent, reads "stop" */
-  --line:      rgba(41, 37, 36, 0.10);
-  --scrim:     rgba(41, 37, 36, 0.50);
-  --knob:      255 255 255;   /* switch knob — deliberately white in both themes */
-  --on-pal:    255 255 255;   /* text on a filled person pill (white in light) */
+  --highlight: 242 185  13;   /* sunflower — earned moments only */
+  --highlight-fg: 62  47   8;
+  --success:    22 130  68;
+  --danger:    198  40  62;
+  --line:      rgba(37, 35, 54, 0.10);
+  --scrim:     rgba(24, 22, 40, 0.50);
+  --knob:      255 255 255;   /* switch knob — white in both themes */
+  --on-pal:    255 255 255;   /* text on a filled person pill */
+  --well:      255 255 255;   /* translucent paper wells laid ON color fields */
 
-  /* Person palette — 8 warm-harmonized hues; ≥4.5:1 both as chip text on surface
-     and under white pill text (--on-pal). */
-  --pal-1: 201  58  96;    /* rose */
-  --pal-2: 161  98   7;    /* golden */
-  --pal-3:  47 125  70;    /* sage */
-  --pal-4:  36 114 164;    /* sky */
-  --pal-5: 137  66 194;    /* plum */
-  --pal-6: 194  53 155;    /* pink */
-  --pal-7:  15 118 110;    /* teal */
-  --pal-8: 192  86  33;    /* clementine */
+  /* Gouache fields — saturated painted-paper card colors. Each pairs with a
+     foreground via the .field-N classes below (ink on bright, paper on deep). */
+  --f1: 245 197  30;   /* sunflower */
+  --f2: 235 106  44;   /* tangerine */
+  --f3: 234 104 148;   /* flamingo */
+  --f4:  23 122  66;   /* kelly green */
+  --f5:  42  87 199;   /* cobalt */
+  --f6: 116  70 188;   /* plum */
 
-  /* Card tints — warm pastels for task cards & charts. */
-  --c-yellow: 251 239 203;
-  --c-purple: 240 231 248;
-  --c-blue:   227 238 246;
-  --c-pink:   251 229 231;
-  --c-mint:   226 242 229;
-  --c-peach:  252 232 220;
+  /* Person palette — 8 gouache hues; ≥4.5:1 as chip text on surface and
+     under white pill text (--on-pal). */
+  --pal-1: 209  46  82;    /* poppy */
+  --pal-2: 158 102   8;    /* ochre */
+  --pal-3:  23 122  66;    /* kelly */
+  --pal-4:  43  88 200;    /* cobalt */
+  --pal-5: 118  70 190;    /* violet */
+  --pal-6: 186  42 140;    /* magenta */
+  --pal-7:  11 116 108;    /* teal */
+  --pal-8: 182  78  22;    /* burnt orange */
 
-  /* Shadows tinted warm stone — diffused, no hard lines */
-  --shadow-card:  0 6px 20px -6px rgba(41, 37, 36, 0.10), 0 2px 6px -2px rgba(41, 37, 36, 0.06);
-  --shadow-float: 0 18px 44px -14px rgba(41, 37, 36, 0.18), 0 6px 14px -6px rgba(41, 37, 36, 0.08);
+  /* Soft paper tints — quiet backgrounds (charts, chips); the loud color
+     lives in the fields, these stay whispers. */
+  --c-yellow: 248 238 205;
+  --c-purple: 235 228 246;
+  --c-blue:   222 232 249;
+  --c-pink:   250 226 234;
+  --c-mint:   221 240 228;
+  --c-peach:  250 231 218;
+
+  /* Shadows tinted ink — diffused, no hard lines */
+  --shadow-card:  0 6px 20px -6px rgba(37, 35, 54, 0.12), 0 2px 6px -2px rgba(37, 35, 54, 0.07);
+  --shadow-float: 0 18px 44px -14px rgba(37, 35, 54, 0.22), 0 6px 14px -6px rgba(37, 35, 54, 0.10);
 }
 
-/* Dark — warm espresso, auto via device setting. Same semantic roles. */
+/* Dark — painted paper on a dark table. Fields stay saturated; the canvas
+   deepens to ink-navy so the color reads like cutouts under lamplight. */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* True-black-warm depth (Apple Watch / Moonly reference): deeper than a
-       mid-brown dark mode, but still warm-tinted, never neutral-gray-black. */
-    --bg:        18  17  16;    /* #121110 */
-    --surface:   28  25  24;    /* #1C1918 */
-    --surface2:  40  35  32;    /* #282320 */
-    --ink:      242 239 236;
-    --ink2:     168 161 154;
-    --accent:   240 120  92;    /* brightened coral */
-    --accent-fg: 43  20  14;    /* deep brown on coral */
+    --bg:         21  20  32;   /* #151420 ink-navy table */
+    --surface:    31  30  46;
+    --surface2:   44  43  62;
+    --ink:       239 238 232;   /* paper-white type */
+    --ink2:      168 166 186;
+    --accent:    124 156 245;   /* brightened cobalt */
+    --accent-fg:  15  22  46;
     --highlight: 247 201  72;
-    --highlight-fg: 61  42  10;
-    --success:   74 200 122;
-    --danger:   241 106  94;
-    --line:     rgba(255, 255, 255, 0.10);
-    --scrim:    rgba(0, 0, 0, 0.60);
-    --on-pal:    27  25  23;   /* text on a filled person pill (near-black in dark) */
+    --highlight-fg: 62  47   8;
+    --success:    87 205 133;
+    --danger:    244 118 118;
+    --line:      rgba(255, 255, 255, 0.10);
+    --scrim:     rgba(0, 0, 0, 0.60);
+    --on-pal:     21  20  32;
+    --well:       21  20  32;   /* wells on fields become ink-navy glass */
 
-    /* Brightened for legibility as text on the dark surface (≥4.5:1); filled
-       pills flip to dark --on-pal text rather than white. */
-    --pal-1: 230  96 136;
-    --pal-2: 199 127  19;
-    --pal-3:  59 158  88;
-    --pal-4:  51 144 204;
-    --pal-5: 172 116 224;
-    --pal-6: 215  92 183;
-    --pal-7:  26 163 150;
-    --pal-8: 214 112  46;
+    /* Fields hold their saturation — slightly deepened for lamplight */
+    --f1: 224 178  26;
+    --f2: 219  96  38;
+    --f3: 219  92 136;
+    --f4:  30 138  78;
+    --f5:  64 104 210;
+    --f6: 126  82 198;
+
+    /* Brightened for legibility as text on the dark surface (≥4.5:1) */
+    --pal-1: 240 106 134;
+    --pal-2: 212 150  34;
+    --pal-3:  68 176 106;
+    --pal-4: 122 156 248;
+    --pal-5: 176 128 235;
+    --pal-6: 228 106 194;
+    --pal-7:  46 178 166;
+    --pal-8: 232 130  66;
 
     /* Deep muted tints — a hue whisper on dark surfaces */
-    --c-yellow: 51 44 27;
-    --c-purple: 46 39 53;
-    --c-blue:   36 43 51;
-    --c-pink:   54 37 39;
-    --c-mint:   36 48 38;
-    --c-peach:  54 42 34;
+    --c-yellow: 51 46 24;
+    --c-purple: 45 40 60;
+    --c-blue:   33 40 62;
+    --c-pink:   56 36 44;
+    --c-mint:   32 48 38;
+    --c-peach:  54 41 32;
 
-    --shadow-card:  0 6px 20px -6px rgba(0, 0, 0, 0.45), 0 2px 6px -2px rgba(0, 0, 0, 0.35);
-    --shadow-float: 0 18px 44px -14px rgba(0, 0, 0, 0.60), 0 6px 14px -6px rgba(0, 0, 0, 0.40);
+    --shadow-card:  0 6px 20px -6px rgba(0, 0, 0, 0.50), 0 2px 6px -2px rgba(0, 0, 0, 0.38);
+    --shadow-float: 0 18px 44px -14px rgba(0, 0, 0, 0.65), 0 6px 14px -6px rgba(0, 0, 0, 0.45);
   }
 }
+
+/* ── Gouache fields ───────────────────────────────────────────────────────────
+   A field is a full saturated color surface. The class sets the paint AND the
+   matching foreground pair, so children can use text-f-fg / bg-well tokens.
+   Bright paints carry ink type; deep paints carry paper type. */
+
+.field   { background-color: rgb(var(--f)); color: rgb(var(--f-fg)); }
+.field-1 { --f: var(--f1); --f-fg: 37 35 54; }
+.field-2 { --f: var(--f2); --f-fg: 30 24 16; }
+.field-3 { --f: var(--f3); --f-fg: 44 22 32; }
+.field-4 { --f: var(--f4); --f-fg: 255 255 255; }
+.field-5 { --f: var(--f5); --f-fg: 255 255 255; }
+.field-6 { --f: var(--f6); --f-fg: 255 255 255; }
+
+@media (prefers-color-scheme: dark) {
+  /* On the dark table every field's type flips to the ink-navy of the canvas
+     for the bright paints, paper for the deep ones — checked ≥4.5:1. */
+  .field-1 { --f-fg: 26 24 38; }
+  .field-2 { --f-fg: 26 18 12; }
+  .field-3 { --f-fg: 40 16 26; }
+  .field-4 { --f-fg: 236 246 238; }
+  .field-5 { --f-fg: 238 242 252; }
+  .field-6 { --f-fg: 240 236 250; }
+}
+
+/* Organic hand-cut shape for icon tiles and hero marks */
+.blob   { border-radius: 46% 54% 55% 45% / 52% 44% 58% 42%; }
+.blob-2 { border-radius: 58% 42% 46% 54% / 44% 56% 42% 58%; }
 
 html, body {
   -webkit-tap-highlight-color: transparent;
@@ -112,6 +159,23 @@ body {
   text-rendering: optimizeLegibility;
   font-feature-settings: "kern", "liga", "calt";
   letter-spacing: normal;
+}
+
+/* Paper grain — one fixed, pointer-less overlay; costs one repeated tile.
+   Subtle enough to read as material, not noise. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+  background-repeat: repeat;
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+}
+@media (prefers-color-scheme: dark) {
+  body::after { opacity: 0.05; mix-blend-mode: soft-light; }
 }
 
 h1, h2, h3 {

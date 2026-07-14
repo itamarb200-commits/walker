@@ -28,7 +28,7 @@ function SectionCard({ title, icon: Icon, tint, children }) {
     <div className="rounded-card bg-surface p-5 shadow-card">
       <div className="mb-3 flex items-center gap-2.5">
         {Icon && (
-          <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-knob ${tint}`}>
+          <span className={`blob flex h-8 w-8 shrink-0 items-center justify-center text-knob ${tint}`}>
             <Icon size={16} strokeWidth={2.4} />
           </span>
         )}

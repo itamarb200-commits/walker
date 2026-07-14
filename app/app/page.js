@@ -65,10 +65,11 @@ export default function AppHome() {
         {tab === "settings" && <SettingsBoard ctx={ctx} />}
       </main>
 
-      {/* Floating pill — an independent "island" detached from the screen
-          edge, rather than a bar fused to the bottom of the viewport. */}
+      {/* Floating ink island — printed inverse of the canvas: ink bar with
+          paper type in light, paper bar with ink type in dark. The active tab
+          is a filled cobalt pill, like a wet brush press. */}
       <nav
-        className="fixed inset-x-4 z-40 mx-auto flex max-w-[416px] items-center justify-around rounded-pill bg-surface px-2 py-1.5 shadow-float"
+        className="fixed inset-x-4 z-40 mx-auto flex max-w-[416px] items-center justify-around rounded-pill bg-ink px-2 py-1.5 shadow-float"
         style={{ bottom: "max(env(safe-area-inset-bottom), 16px)" }}
       >
         {TABS.map((tb) => {
@@ -79,12 +80,12 @@ export default function AppHome() {
               onClick={() => setTab(tb.key)}
               aria-current={active ? "page" : undefined}
               className={`flex min-h-[48px] flex-1 flex-col items-center justify-center gap-0.5 rounded-pill text-cap font-semibold transition-colors active:scale-[0.97] ${
-                active ? "text-accent" : "text-ink2"
+                active ? "text-bg" : "text-bg/60"
               }`}
             >
               <span
                 className={`flex h-7 items-center justify-center rounded-pill px-4 transition-colors ${
-                  active ? "bg-accent/10" : "bg-transparent"
+                  active ? "bg-accent text-accent-fg" : "bg-transparent"
                 }`}
               >
                 <tb.Icon size={19} strokeWidth={active ? 2.4 : 2} />

@@ -141,7 +141,7 @@ export default function AuthPage() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-8 px-6 pb-safe-b pt-10">
       <div className="flex flex-col items-center gap-3">
-        <span className="flex h-16 w-16 items-center justify-center rounded-tile bg-accent text-accent-fg shadow-card">
+        <span className="blob flex h-16 w-16 items-center justify-center bg-accent text-accent-fg shadow-card">
           <PawPrint size={32} strokeWidth={2.2} aria-hidden="true" />
         </span>
         <h1 className="text-h1">{t("app.name")}</h1>
