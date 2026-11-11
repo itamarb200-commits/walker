@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מלווה לנהג חדש</title>
+<meta name="description" content="ניהול תקופת הליווי לנהג חדש: שעון ספירה לאחור למלווה יום ולילה, יומן נסיעות ושעות נהיגה.">
+<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="מלווה">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="/melave/manifest.json">
+<link rel="icon" href="/melave/icon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/melave/icon-180.png">
+<style>
+:root{
+  --bg:#F2F2F7; --surface:#FFFFFF; --fill:#EFEFF4; --ink:#000000; --ink2:#6C6C70; --ink3:#AEAEB2;
+  --sep:rgba(60,60,67,.14); --blue:#007AFF; --blue-fg:#FFFFFF;
+  --day:#FF9500; --night:#5856D6; --green:#34C759; --red:#FF3B30; --orange:#FF9500;
+  --green-t:#1E7B36; --red-t:#D70015; --orange-t:#B25000; --night-t:#4744C8;
+  --glass:rgba(255,255,255,.72); --glass-line:rgba(0,0,0,.08);
+  --shadow:0 1px 1px rgba(0,0,0,.03),0 8px 24px rgba(0,0,0,.05);
+  --seg-on:#FFFFFF;
+  --round:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,"Segoe UI",Rubik,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --surface:#1C1C1E; --fill:#2C2C2E; --ink:#FFFFFF; --ink2:#A1A1A8; --ink3:#636366;
+    --sep:rgba(120,120,128,.3); --blue:#0A84FF; --blue-fg:#FFFFFF;
+    --day:#FF9F0A; --night:#7D7AFF; --green:#30D158; --red:#FF453A; --orange:#FF9F0A;
+    --green-t:#30D158; --red-t:#FF6961; --orange-t:#FFB340; --night-t:#9896FF;
+    --glass:rgba(30,30,32,.72); --glass-line:rgba(255,255,255,.1);
+    --shadow:none;
+    --seg-on:#636366; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+    --bg:#000000; --surface:#1C1C1E; --fill:#2C2C2E; --ink:#FFFFFF; --ink2:#A1A1A8; --ink3:#636366;
+    --sep:rgba(120,120,128,.3); --blue:#0A84FF; --blue-fg:#FFFFFF;
+    --day:#FF9F0A; --night:#7D7AFF; --green:#30D158; --red:#FF453A; --orange:#FF9F0A;
+    --green-t:#30D158; --red-t:#FF6961; --orange-t:#FFB340; --night-t:#9896FF;
+    --glass:rgba(30,30,32,.72); --glass-line:rgba(255,255,255,.1);
+    --shadow:none;
+    --seg-on:#636366; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,system-ui,"SF Pro Text","Segoe UI",Rubik,Arial,sans-serif;
+  font-size:16px;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh;padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+main{max-width:592px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hidden{display:none!important}
+button{font:inherit;cursor:pointer;color:inherit}
+
+/* large title */
+header{max-width:560px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 20px 10px;
+  display:flex;align-items:flex-end;justify-content:space-between}
+header .sub{font-size:13px;font-weight:600;color:var(--ink2)}
+header h1{font-size:34px;line-height:1.1;margin:2px 0 0;font-weight:800;letter-spacing:-.4px}
+.fab{width:38px;height:38px;border-radius:50%;border:0;background:var(--blue);color:var(--blue-fg);
+  display:grid;place-items:center;box-shadow:0 4px 14px color-mix(in srgb,var(--blue) 40%,transparent)}
+.fab svg{width:20px;height:20px}
+
+.card{background:var(--surface);border-radius:22px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card h2{font-size:20px;margin:0 0 12px;font-weight:700;letter-spacing:-.2px}
+.sect{font-size:13px;color:var(--ink2);margin:22px 16px 7px;font-weight:500}
+.muted{color:var(--ink2)}
+.small{font-size:13px}
+.row{display:flex;gap:10px;align-items:center}
+.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.btn{border:0;border-radius:14px;padding:14px 16px;font-weight:600;font-size:17px;background:var(--blue);color:var(--blue-fg);width:100%;
+  transition:transform .12s,opacity .12s}
+.btn:active,.fab:active,.tabbar button:active{transform:scale(.96);opacity:.85}
+.btn.secondary{background:var(--fill);color:var(--blue)}
+.btn.danger{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red-t)}
+.btn.sm{width:auto;padding:7px 14px;font-size:15px;border-radius:99px}
+label{display:block;font-size:13px;font-weight:500;color:var(--ink2);margin:14px 4px 6px}
+input,select,textarea{font:inherit;font-size:17px;width:100%;padding:12px 14px;border-radius:12px;border:0;
+  background:var(--fill);color:var(--ink);-webkit-appearance:none;appearance:none;min-height:46px}
+textarea{min-height:64px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+
+/* status */
+.status{display:flex;gap:14px;align-items:center}
+.status .ico{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none;color:#fff}
+.status .ico svg{width:24px;height:24px}
+.status.ok .ico{background:var(--green)} .status.warn .ico{background:var(--orange)} .status.bad .ico{background:var(--red)}
+.status b{display:block;font-size:17px;font-weight:700;letter-spacing:-.2px}
+.status .detail{color:var(--ink2);font-size:14px;line-height:1.4;margin-top:2px}
+
+/* hero: activity rings + countdown clocks */
+.hero{padding:22px 18px 6px}
+.rings{position:relative;width:188px;margin:0 auto 8px}
+.rings svg{display:block;width:100%;height:auto}
+.rings .arc{transition:stroke-dasharray .8s cubic-bezier(.2,.8,.2,1)}
+.rings .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--ink2);font-size:12px;font-weight:600}
+.rings .mid svg{width:30px;height:30px}
+.cd{padding:16px 0;border-top:1px solid var(--sep)}
+.cd:first-of-type{border-top:0}
+.cd-head{display:flex;align-items:center;gap:8px;font-weight:700;font-size:17px;margin-bottom:10px}
+.cd-head .dot{width:12px;height:12px;border-radius:50%}
+.cd-head .end{margin-inline-start:auto;font-size:13px;font-weight:500;color:var(--ink2)}
+.cd-digits{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cd-digits div{background:var(--fill);border-radius:14px;padding:10px 0 8px;text-align:center}
+.cd-digits b{display:block;font-family:var(--round);font-size:30px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.cd-digits span{font-size:11px;font-weight:600;color:var(--ink2)}
+.cd.day .cd-digits b{color:var(--orange-t)} .cd.night .cd-digits b{color:var(--night-t)}
+.cd-done{display:flex;align-items:center;gap:8px;color:var(--green-t);font-weight:600;font-size:16px}
+.cd-done svg{width:22px;height:22px}
+
+/* bars */
+.bar{margin:14px 0 0}
+.bar .top{display:flex;justify-content:space-between;font-size:15px;margin-bottom:6px}
+.bar .top b{font-family:var(--round);font-variant-numeric:tabular-nums}
+.bar .track{height:8px;background:var(--fill);border-radius:99px;overflow:hidden}
+.bar .fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+
+/* inset grouped list */
+.list{background:var(--surface);border-radius:22px;margin-bottom:16px;box-shadow:var(--shadow);overflow:hidden}
+.li{display:flex;gap:12px;align-items:center;padding:13px 16px;position:relative;font-size:16px}
+.li + .li::before{content:"";position:absolute;top:0;inset-inline:52px 0;height:1px;background:var(--sep)}
+.li.plain + .li.plain::before{inset-inline-start:16px}
+.li .lead{width:26px;height:26px;flex:none;display:grid;place-items:center}
+.li .lead svg{width:24px;height:24px}
+.li .lead.yes{color:var(--green)} .li .lead.no{color:var(--ink3)}
+.li .grow{flex:1;min-width:0}
+.li .val{color:var(--ink2);font-variant-numeric:tabular-nums}
+.li.no .grow{color:var(--ink2)}
+
+/* trips */
+.trip{display:flex;gap:12px;align-items:center;padding:13px 16px;position:relative;width:100%;border:0;background:transparent;text-align:start}
+.trip + .trip::before{content:"";position:absolute;top:0;inset-inline:16px 0;height:1px;background:var(--sep)}
+.trip .when{flex:1;min-width:0}
+.trip .when b{display:block;font-weight:600;font-size:16px}
+.trip .dur{font-family:var(--round);font-weight:700;font-size:18px;white-space:nowrap}
+.trip .chev{color:var(--ink3);width:10px;height:16px;flex:none}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--fill);color:var(--ink2);margin:5px 0 0;margin-inline-end:4px}
+.chip.night{background:color-mix(in srgb,var(--night) 16%,transparent);color:var(--night-t)}
+.chip.solo{background:color-mix(in srgb,var(--orange) 18%,transparent);color:var(--orange-t)}
+.empty{text-align:center;padding:36px 16px;color:var(--ink2);line-height:1.5}
+
+.timer{font-family:var(--round);font-size:56px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1.1;margin-top:6px}
+.live-dot{width:9px;height:9px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.25}}
+
+.seg{display:flex;background:var(--fill);border-radius:11px;padding:2px;gap:2px}
+.seg button{flex:1;border:0;background:transparent;color:var(--ink);padding:8px 4px;border-radius:9px;font-weight:500;font-size:14px}
+.seg button.on{background:var(--seg-on);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.14)}
+.quick{display:flex;gap:6px;margin-top:8px;overflow-x:auto;scrollbar-width:none}
+.quick::-webkit-scrollbar{display:none}
+.quick button{flex:none}
+
+.rules h3{font-size:17px;margin:20px 0 6px;font-weight:700}
+.rules ul{margin:0;padding-inline-start:20px}
+.rules li{margin:6px 0;line-height:1.5;font-size:15px}
+.note{font-size:12px;color:var(--ink2);line-height:1.5}
+.inset{background:var(--fill);border-radius:16px;padding:14px;margin-top:12px}
+.inset input{background:var(--surface)}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 4px 4px;font-size:16px;color:var(--ink);font-weight:400}
+.switch input{appearance:none;-webkit-appearance:none;width:51px;min-height:31px;height:31px;border-radius:99px;background:var(--ink3);padding:0;position:relative;flex:none;transition:background .2s}
+.switch input::after{content:"";position:absolute;top:2px;inset-inline-start:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:transform .2s}
+.switch input:checked{background:var(--green)}
+.switch input:checked::after{transform:translateX(-20px)}
+
+/* floating glass tab bar */
+.tabbar{position:fixed;bottom:calc(12px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:10;
+  width:min(calc(100% - 28px),420px);display:flex;padding:6px;border-radius:32px;
+  background:var(--glass);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid var(--glass-line);box-shadow:0 10px 36px rgba(0,0,0,.16)}
+.tabbar button{flex:1;border:0;background:transparent;color:var(--ink2);padding:7px 0 6px;font-size:11px;font-weight:600;border-radius:26px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;transition:background .2s,color .2s,transform .12s}
+.tabbar svg{width:24px;height:24px}
+.tabbar button.on{color:var(--blue);background:color-mix(in srgb,var(--blue) 13%,transparent)}
+
+/* sheet */
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{background:var(--surface);width:100%;max-width:560px;border-radius:28px 28px 0 0;padding:8px 18px calc(20px + env(safe-area-inset-bottom));
+  max-height:94dvh;overflow:auto;animation:up .32s cubic-bezier(.2,.9,.25,1)}
+.grab{width:36px;height:5px;border-radius:99px;background:var(--ink3);margin:0 auto 12px;opacity:.6}
+.sheet-head{display:flex;align-items:center;justify-content:space-between}
+.sheet-head h2{margin:0;font-size:20px;font-weight:700}
+.xbtn{width:30px;height:30px;border-radius:50%;border:0;background:var(--fill);color:var(--ink2);display:grid;place-items:center}
+.xbtn svg{width:13px;height:13px}
+@keyframes up{from{transform:translateY(100%)}}
+@keyframes fade{from{opacity:0}}
+.alert-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;display:grid;place-items:center;padding:24px;animation:fade .2s}
+.alert{background:var(--surface);border-radius:22px;padding:22px 18px 16px;width:100%;max-width:320px;text-align:center}
+.alert p{margin:0 0 18px;font-size:17px;font-weight:600;line-height:1.4}
+.toast{position:fixed;bottom:calc(100px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(8px);
+  background:var(--glass);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid var(--glass-line);color:var(--ink);box-shadow:0 8px 28px rgba(0,0,0,.18);
+  padding:11px 20px;border-radius:99px;font-size:15px;font-weight:600;z-index:30;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%)}
+section{animation:fade .25s}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="sub" id="hdrSub"></div>
+    <h1 id="hdrTitle">נהג חדש</h1>
+  </div>
+  <button class="fab" id="hdrAdd" aria-label="הוספת נסיעה">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+</header>
+
+<main>
+  <!-- ========== HOME ========== -->
+  <section id="tab-home">
+    <div id="setupCard" class="card hidden">
+      <h2>ברוך/ה הבא/ה</h2>
+      <p class="muted" style="margin-top:0">כדי לחשב כמה זמן נשאר למלווה, הזינו את תאריך קבלת הרישיון (היתר הנהיגה).</p>
+      <button class="btn" data-go="settings">הגדרת תאריך רישיון</button>
+    </div>
+
+    <div id="homeMain">
+      <div class="card"><div id="status" class="status"></div></div>
+
+      <div class="card hero" id="hero"></div>
+
+      <div class="card" id="liveCard">
+        <div class="row between">
+          <h2 style="margin:0">נסיעה עכשיו</h2>
+          <span class="small muted" id="liveHint"></span>
+        </div>
+        <div id="liveIdle">
+          <p class="muted small" style="margin:6px 0 14px;line-height:1.45">לוחצים כשיוצאים לדרך ועוצרים כשמגיעים — הנסיעה תירשם ביומן.</p>
+          <button class="btn" id="liveStart">התחלת נסיעה</button>
+        </div>
+        <div id="liveRun" class="hidden">
+          <div class="timer" id="liveTimer" dir="ltr">00:00:00</div>
+          <p class="muted small" style="text-align:center;margin:4px 0 14px"><span class="live-dot"></span> <span id="liveSince"></span></p>
+          <div class="grid2">
+            <button class="btn secondary" id="liveCancel">ביטול</button>
+            <button class="btn" id="liveStop" style="background:var(--red)">סיום ושמירה</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row between"><h2 style="margin:0">שעות נהיגה עם מלווה</h2><span class="small muted">יעד מומלץ</span></div>
+        <div id="bars"></div>
+      </div>
+
+      <div class="sect">היתרים והגבלות</div>
+      <div class="list" id="perms"></div>
+
+      <div class="sect">תאריכים חשובים</div>
+      <div class="list" id="dates"></div>
+    </div>
+  </section>
+
+  <!-- ========== TRIPS ========== -->
+  <section id="tab-trips" class="hidden">
+    <p class="small muted" id="tripsSummary" style="margin:0 16px 12px"></p>
+    <div class="list" id="tripList"></div>
+    <button class="btn" id="tripsAdd">הוספת נסיעה</button>
+  </section>
+
+  <!-- ========== RULES ========== -->
+  <section id="tab-rules" class="hidden">
+    <div class="card rules">
+      <p class="muted small" style="margin:0">סיכום הכללים בישראל לנהג חדש צעיר. בכל מקרה של ספק — הנוסח המחייב הוא באתר משרד התחבורה (gov.il).</p>
+
+      <h3>תקופת הליווי (מתחת לגיל 24)</h3>
+      <ul>
+        <li><b>3 חודשים ראשונים</b> מקבלת הרישיון — חובת מלווה <b>בכל שעות היממה</b>.</li>
+        <li><b>3 חודשים נוספים</b> (חודשים 4–6) — חובת מלווה <b>בלילה בלבד</b>: מ־<b>21:00 עד 06:00</b>. ביום מותר לנהוג לבד.</li>
+        <li>סה״כ תקופת ליווי: <b>חצי שנה</b>.</li>
+      </ul>
+
+      <h3>שעות נהיגה מומלצות</h3>
+      <ul>
+        <li>לפחות <b>50 שעות</b> נהיגה עם מלווה, מתוכן:</li>
+        <li><b>20 שעות</b> בדרך עירונית, <b>15 שעות</b> בדרך בין־עירונית, <b>15 שעות</b> בלילה.</li>
+      </ul>
+
+      <h3>הצהרה על סיום הליווי</h3>
+      <ul>
+        <li>בסוף התקופה מגישים <b>הצהרה מקוונת</b> באתר משרד התחבורה — "הצהרת נהג חדש על סיום תכנית הליווי".</li>
+        <li>צריך: ת.ז. של הנהג, מספר ההיתר הזמני, ות.ז. + מספר רישיון של המלווים.</li>
+        <li>אפשר להגיש מוקדם, אבל הרישיון החדש לא יונפק לפני שעברו 6 חודשים.</li>
+      </ul>
+
+      <h3>מי יכול להיות מלווה</h3>
+      <ul>
+        <li>מגיל <b>24</b> ומעלה עם רישיון לאותו סוג רכב <b>5 שנים</b> לפחות, <b>או</b></li>
+        <li>מגיל <b>30</b> ומעלה עם רישיון לאותו סוג רכב <b>3 שנים</b> לפחות.</li>
+        <li>המלווה יושב/ת במושב הקדמי ליד הנהג/ת.</li>
+      </ul>
+      <div class="inset">
+        <b>בדיקה מהירה: יכול/ה ללוות?</b>
+        <div class="grid2">
+          <div><label for="chkAge">גיל המלווה</label><input id="chkAge" type="number" inputmode="numeric" min="16" max="120"></div>
+          <div><label for="chkYears">שנות רישיון</label><input id="chkYears" type="number" inputmode="numeric" min="0" max="100"></div>
+        </div>
+        <p id="chkOut" style="margin:10px 4px 0;font-weight:600"></p>
+      </div>
+
+      <h3>כל תקופת "נהג חדש" (שנתיים)</h3>
+      <ul>
+        <li>נהג חדש — <b>שנתיים</b> מיום קבלת הרישיון, בלי קשר לגיל.</li>
+        <li>חובה להציב שלט <b>"נהג חדש"</b> בחלון האחורי של הרכב.</li>
+        <li>מתחת לגיל <b>21</b>: אסור להסיע <b>יותר משני נוסעים</b>, אלא אם יושב/ת ליד הנהג/ת נהג/ת מנוסה (שעומד/ת בתנאי המלווה).</li>
+        <li>אפס סובלנות לאלכוהול — לא לשתות בכלל לפני נהיגה.</li>
+        <li>צבירת נקודות בתקופת נהג חדש עלולה להוביל לפסילה ולחזרה למבחן.</li>
+      </ul>
+
+      <p class="note" style="margin-top:18px">האפליקציה היא כלי עזר אישי ואינה ייעוץ משפטי. החוקים עשויים להשתנות — בדקו תמיד מול משרד התחבורה.</p>
+    </div>
+  </section>
+
+  <!-- ========== SETTINGS ========== -->
+  <section id="tab-settings" class="hidden">
+    <div class="card">
+      <h2>הפרטים שלי</h2>
+      <label for="setName">שם (לא חובה)</label>
+      <input id="setName" type="text" autocomplete="given-name">
+      <label for="setLicense">תאריך הנפקת רישיון (היתר נהיגה)</label>
+      <input id="setLicense" type="date">
+      <label for="setBirth">תאריך לידה (לחישוב הגבלת הנוסעים מתחת לגיל 21)</label>
+      <input id="setBirth" type="date">
+      <label class="switch" for="setDeclared">
+        הגשתי הצהרה על סיום הליווי
+        <input id="setDeclared" type="checkbox">
+      </label>
+      <button class="btn" id="setSave" style="margin-top:16px">שמירה</button>
+    </div>
+
+    <div class="card">
+      <h2>גיבוי</h2>
+      <p class="muted small" style="margin-top:0;line-height:1.45">הנתונים נשמרים רק בטלפון הזה. מומלץ לגבות מדי פעם.</p>
+      <div class="grid2">
+        <button class="btn secondary" id="exportBtn">ייצוא קובץ</button>
+        <button class="btn secondary" id="importBtn">ייבוא קובץ</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json,.json" class="hidden">
+      <button class="btn secondary" id="copyBtn" style="margin-top:10px">העתקת גיבוי כטקסט</button>
+      <label for="pasteBox">שחזור מטקסט גיבוי</label>
+      <textarea id="pasteBox" dir="ltr" placeholder="הדביקו כאן טקסט גיבוי"></textarea>
+      <button class="btn secondary" id="pasteBtn" style="margin-top:10px">שחזור</button>
+      <button class="btn danger" id="resetBtn" style="margin-top:10px">מחיקת כל הנתונים</button>
+    </div>
+  </section>
+</main>
+
+<nav class="tabbar">
+  <button data-tab="home" class="on">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>מלווה</button>
+  <button data-tab="trips">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l2-5.2A2 2 0 0 1 7.9 6.500h8.200A2 2 0 0 1 18 7.800L20 13"/><path d="M3.500 13h17v4.500h-17z"/><path d="M6.500 17.500V19M17.500 17.500V19"/></svg>נסיעות</button>
+  <button data-tab="rules">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.500C10 5 7 4.500 4 5v13c3-.5 6 0 8 1.500 2-1.500 5-2 8-1.500V5c-3-.5-6 0-8 1.500zM12 6.500v13"/></svg>חוקים</button>
+  <button data-tab="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="3.600"/><path d="M4.500 20c.8-3.600 3.800-5.500 7.500-5.500s6.700 1.900 7.500 5.500"/></svg>פרופיל</button>
+</nav>
+
+<!-- trip editor -->
+<div class="sheet-bg hidden" id="sheet">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="grab"></div>
+    <div class="sheet-head"><h2 id="sheetTitle">נסיעה חדשה</h2>
+      <button class="xbtn" id="sheetClose" aria-label="סגירה"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button></div>
+    <label for="fDate">תאריך</label>
+    <input id="fDate" type="date">
+    <div class="grid2">
+      <div><label for="fStart">שעת התחלה</label><input id="fStart" type="time"></div>
+      <div><label for="fDur">משך (דקות)</label><input id="fDur" type="number" inputmode="numeric" min="1" max="1440"></div>
+    </div>
+    <div class="quick" id="durQuick"></div>
+    <label>סוג דרך</label>
+    <div class="seg" id="fRoad">
+      <button type="button" data-v="urban">עירונית</button>
+      <button type="button" data-v="mixed">משולבת</button>
+      <button type="button" data-v="intercity">בין־עירונית</button>
+    </div>
+    <label>ליווי</label>
+    <div class="seg" id="fAcc">
+      <button type="button" data-v="1">עם מלווה</button>
+      <button type="button" data-v="0">נהגתי לבד</button>
+    </div>
+    <div id="fCompWrap">
+      <label for="fComp">שם המלווה</label>
+      <input id="fComp" type="text" list="compList" placeholder="למשל: אבא">
+      <datalist id="compList"></datalist>
+    </div>
+    <label for="fNote">הערות</label>
+    <textarea id="fNote" placeholder="מסלול, מה למדתי…"></textarea>
+    <p class="small muted" id="fPreview" style="margin:12px 4px 0;line-height:1.5"></p>
+    <button class="btn" id="fSave" style="margin-top:14px">שמירה</button>
+    <button class="btn danger hidden" id="fDelete" style="margin-top:10px">מחיקת נסיעה</button>
+  </div>
+</div>
+
+<div class="alert-bg hidden" id="ask"><div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="askMsg">
+  <p id="askMsg"></p>
+  <div class="grid2"><button class="btn secondary" id="askNo">ביטול</button><button class="btn danger" id="askOk">אישור</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+"use strict";
+const KEY = "melave.v1";
+const NIGHT_START = 21, NIGHT_END = 6;           // 21:00–06:00
+const GOALS = { total: 50 * 60, urban: 20 * 60, intercity: 15 * 60, night: 15 * 60 };
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+
+const svg = (inner, fill) => `<svg viewBox="0 0 24 24" fill="${fill ? "currentColor" : "none"}" stroke="${fill ? "none" : "currentColor"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+const IC = {
+  sun: svg('<circle cx="12" cy="12" r="4.200"/><path d="M12 2.500v2M12 19.500v2M2.500 12h2M19.500 12h2M5.300 5.300l1.400 1.400M17.300 17.300l1.400 1.400M5.300 18.700l1.400-1.400M17.300 6.700l1.400-1.400"/>'),
+  moon: svg('<path d="M20 14.500A8.500 8.500 0 0 1 9.500 4a8.500 8.500 0 1 0 10.500 10.500z"/>'),
+  people: svg('<circle cx="9" cy="8" r="3.200"/><path d="M2.800 19c.6-3 3-4.800 6.200-4.800s5.600 1.800 6.200 4.800"/><circle cx="17.500" cy="9" r="2.400"/><path d="M17.500 14c2.200.2 3.600 1.700 4 3.800"/>'),
+  check: svg('<path d="M5 12.500l4.500 4.500L19 7.500"/>'),
+  doc: svg('<path d="M7 3.500h7l4 4v13H7z"/><path d="M14 3.500v4h4M10 12.500h5M10 16h5"/>'),
+  checkCircle: svg('<path fill-rule="evenodd" d="M12 2.500a9.500 9.500 0 1 0 0 19 9.500 9.500 0 0 0 0-19zm4.600 7.300a1 1 0 0 0-1.500-1.300l-4.300 5-2-2a1 1 0 0 0-1.400 1.400l2.800 2.800a1 1 0 0 0 1.500-.1z"/>', true),
+  lock: svg('<path fill-rule="evenodd" d="M12 2.500a4.500 4.500 0 0 0-4.500 4.500v2.500H7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-.5V7A4.500 4.500 0 0 0 12 2.500zm2.500 7V7a2.500 2.500 0 0 0-5 0v2.500z"/>', true),
+  chev: '<svg class="chev" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2L2 8l6 6"/></svg>',
+};
+
+/* ---------- storage ---------- */
+const blank = () => ({ name: "", license: "", birth: "", declared: false, trips: [], live: null });
+function load() {
+  try { return Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || "{}")); }
+  catch { return blank(); }
+}
+let S = load();
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { toast("לא ניתן לשמור בדפדפן הזה"); }
+}
+
+/* ---------- date helpers ---------- */
+const pad = (n) => String(n).padStart(2, "0");
+const parseD = (s) => { if (!s) return null; const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const isoD = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const fmtD = (d) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+function addMonths(d, n) {
+  const r = new Date(d.getFullYear(), d.getMonth() + n, d.getDate());
+  if (r.getDate() !== d.getDate()) r.setDate(0); // e.g. 31 Jan + 1m -> 28/29 Feb
+  return r;
+}
+function ageAt(birth, at) {
+  let a = at.getFullYear() - birth.getFullYear();
+  if (at.getMonth() < birth.getMonth() || (at.getMonth() === birth.getMonth() && at.getDate() < birth.getDate())) a--;
+  return a;
+}
+function fmtMin(m) {
+  m = Math.round(m);
+  const h = Math.floor(m / 60), r = m % 60;
+  if (!h) return `${r} דק׳`;
+  if (!r) return `${h} שע׳`;
+  return `${h}:${pad(r)} שע׳`;
+}
+const isNightHour = (d) => d.getHours() >= NIGHT_START || d.getHours() < NIGHT_END;
+
+/** minutes of [start, start+dur) that fall inside 21:00–06:00 */
+function nightMinutes(start, durMin) {
+  const end = new Date(start.getTime() + durMin * 60000);
+  let total = 0;
+  for (let d = new Date(start.getFullYear(), start.getMonth(), start.getDate() - 1); d < end; d.setDate(d.getDate() + 1)) {
+    const ws = new Date(d.getFullYear(), d.getMonth(), d.getDate(), NIGHT_START);
+    const we = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1, NIGHT_END);
+    const ov = Math.min(end, we) - Math.max(start, ws);
+    if (ov > 0) total += ov / 60000;
+  }
+  return total;
+}
+const tripStart = (t) => { const d = parseD(t.date); const [h, m] = (t.start || "00:00").split(":").map(Number); d.setHours(h, m); return d; };
+
+/* ---------- derived license info ---------- */
+function info(now = new Date()) {
+  const lic = parseD(S.license);
+  if (!lic) return null;
+  const dayEnd = addMonths(lic, 3), nightEnd = addMonths(lic, 6), newEnd = addMonths(lic, 24);
+  const birth = parseD(S.birth);
+  const age = birth ? ageAt(birth, now) : null;
+  const ageAtLic = birth ? ageAt(birth, lic) : null;
+  const young = ageAtLic == null ? true : ageAtLic < 24;   // accompaniment applies to young new drivers
+  return {
+    lic, dayEnd, nightEnd, newEnd, age, young,
+    inDay: young && now < dayEnd,
+    inNight: young && now < nightEnd,
+    isNew: now < newEnd,
+    under21: age != null && age < 21,
+  };
+}
+
+/* ---------- totals ---------- */
+function totals() {
+  const t = { total: 0, urban: 0, intercity: 0, night: 0, solo: 0, count: 0 };
+  for (const x of S.trips) {
+    t.count++;
+    if (!x.acc) { t.solo += x.dur; continue; }
+    t.total += x.dur;
+    if (x.road === "urban") t.urban += x.dur;
+    else if (x.road === "intercity") t.intercity += x.dur;
+    else { t.urban += x.dur / 2; t.intercity += x.dur / 2; }
+    t.night += nightMinutes(tripStart(x), x.dur);
+  }
+  return t;
+}
+
+/* ---------- hero: rings + countdown clocks ---------- */
+const frac = (I, end, active, now) => !active ? 1 : Math.min(1, Math.max(0, (now - I.lic) / (end - I.lic)));
+function arc(r, f, color) {
+  const c = 2 * Math.PI * r;
+  return `<circle cx="100" cy="100" r="${r}" fill="none" stroke="${color}" stroke-opacity=".18" stroke-width="19"/>
+    <circle class="arc" cx="100" cy="100" r="${r}" fill="none" stroke="${color}" stroke-width="19" stroke-linecap="round"
+      stroke-dasharray="${Math.max(0.01, c * f).toFixed(2)} ${c.toFixed(2)}" transform="rotate(-90 100 100)"/>`;
+}
+function cdBlock(key, label, end, active, color) {
+  return `<div class="cd ${key}">
+    <div class="cd-head"><span class="dot" style="background:${color}"></span>${label}<span class="end">${active ? "עד " + fmtD(end) : ""}</span></div>
+    ${active
+      ? `<div class="cd-digits" role="timer" aria-label="זמן שנותר ל${label}">
+          <div><b id="cd-${key}-d">–</b><span>ימים</span></div><div><b id="cd-${key}-h">–</b><span>שעות</span></div>
+          <div><b id="cd-${key}-m">–</b><span>דקות</span></div><div><b id="cd-${key}-s">–</b><span>שניות</span></div></div>`
+      : `<div class="cd-done">${IC.checkCircle} הסתיים — אין צורך במלווה</div>`}
+  </div>`;
+}
+let heroState = "";
+function renderHero(I, now) {
+  const night = isNightHour(now);
+  const fd = frac(I, I.dayEnd, I.inDay, now), fn = frac(I, I.nightEnd, I.inNight, now);
+  heroState = `${I.inDay}|${I.inNight}`;
+  $("#hero").innerHTML = `
+    <div class="rings">
+      <svg viewBox="0 0 200 200" role="img" aria-label="מלווה יום: עברו ${Math.round(fd * 100)}%. מלווה לילה: עברו ${Math.round(fn * 100)}%">
+        ${arc(88, fd, "var(--day)")}${arc(65, fn, "var(--night)")}
+      </svg>
+      <div class="mid">${night ? IC.moon : IC.sun}<span>${night ? "לילה" : "יום"}</span></div>
+    </div>
+    ${cdBlock("day", "מלווה יום", I.dayEnd, I.inDay, "var(--day)")}
+    ${cdBlock("night", "מלווה לילה", I.nightEnd, I.inNight, "var(--night)")}`;
+  tickCountdown(now, I);
+}
+function tickCountdown(now = new Date(), I = info(now)) {
+  if (!I) return;
+  if (`${I.inDay}|${I.inNight}` !== heroState) return renderHome();   // a period just ended
+  for (const [key, end, active] of [["day", I.dayEnd, I.inDay], ["night", I.nightEnd, I.inNight]]) {
+    if (!active) continue;
+    const s = Math.max(0, Math.floor((end - now) / 1000));
+    const v = { d: Math.floor(s / 86400), h: pad(Math.floor(s / 3600) % 24), m: pad(Math.floor(s / 60) % 60), s: pad(s % 60) };
+    for (const u in v) { const el = $(`#cd-${key}-${u}`); if (el && el.textContent !== String(v[u])) el.textContent = v[u]; }
+  }
+}
+
+/* ---------- render ---------- */
+function renderStatus(I, now) {
+  const el = $("#status");
+  const night = isNightHour(now);
+  let cls, ico, title, detail;
+  if (!I.young) {
+    cls = "ok"; ico = IC.check; title = "אין חובת מלווה";
+    detail = "חובת הליווי חלה על נהגים חדשים מתחת לגיל 24 בעת קבלת הרישיון.";
+  } else if (I.inDay) {
+    cls = "bad"; ico = IC.people; title = "חובה מלווה — יום ולילה";
+    detail = `מ־${fmtD(I.dayEnd)} מותר לנהוג לבד ביום.`;
+  } else if (I.inNight) {
+    if (night) {
+      cls = "bad"; ico = IC.moon; title = "עכשיו לילה — חובה מלווה";
+      const until = new Date(now); if (now.getHours() >= NIGHT_START) until.setDate(until.getDate() + 1);
+      until.setHours(NIGHT_END, 0, 0, 0);
+      detail = `מותר לנהוג לבד שוב מ־06:00, בעוד ${fmtMin((until - now) / 60000)}.`;
+    } else {
+      cls = "ok"; ico = IC.sun; title = "עכשיו מותר לנהוג לבד";
+      const until = new Date(now); until.setHours(NIGHT_START, 0, 0, 0);
+      detail = `מ־21:00 צריך מלווה, בעוד ${fmtMin((until - now) / 60000)}.`;
+    }
+  } else if (!S.declared) {
+    cls = "warn"; ico = IC.doc; title = "תקופת הליווי הסתיימה";
+    detail = "נשאר להגיש הצהרה מקוונת על סיום הליווי באתר משרד התחבורה, ולסמן זאת בפרופיל.";
+  } else {
+    cls = "ok"; ico = IC.check; title = "מותר לנהוג לבד בכל שעה";
+    detail = I.isNew ? `נהג/ת חדש/ה עד ${fmtD(I.newEnd)} — שלט "נהג חדש" חובה.` : "סיימת את תקופת נהג חדש.";
+  }
+  el.className = "status " + cls;
+  el.innerHTML = `<div class="ico">${ico}</div><div><b>${title}</b><div class="detail">${detail}</div></div>`;
+}
+
+function bar(label, val, goal, color) {
+  const pct = Math.min(100, (val / goal) * 100);
+  return `<div class="bar">
+    <div class="top"><span>${label}</span><span><b>${fmtMin(val)}</b> <span class="muted">/ ${goal / 60} שע׳</span></span></div>
+    <div class="track"><div class="fill" style="width:${pct}%;background:${val >= goal ? "var(--green)" : color}"></div></div></div>`;
+}
+const perm = (yes, text) => `<div class="li ${yes ? "" : "no"}"><div class="lead ${yes ? "yes" : "no"}">${yes ? IC.checkCircle : IC.lock}</div><div class="grow">${text}</div></div>`;
+
+function renderHome() {
+  const now = new Date();
+  const I = info(now);
+  $("#setupCard").classList.toggle("hidden", !!I);
+  $("#homeMain").classList.toggle("hidden", !I);
+  $("#hdrSub").textContent = S.name ? `שלום ${S.name}` : "המלווה שלי";
+  if (!I) return;
+
+  renderStatus(I, now);
+  renderHero(I, now);
+
+  const T = totals();
+  $("#bars").innerHTML =
+    bar("סה״כ", T.total, GOALS.total, "var(--blue)") +
+    bar("עירוני", T.urban, GOALS.urban, "var(--green)") +
+    bar("בין־עירוני", T.intercity, GOALS.intercity, "var(--day)") +
+    bar("לילה <span class='muted small' dir='ltr'>21:00–06:00</span>", T.night, GOALS.night, "var(--night)") +
+    (T.solo ? `<p class="small muted" style="margin:12px 0 0">+ ${fmtMin(T.solo)} נהיגה לבד (לא נספר ביעד)</p>` : "");
+
+  $("#perms").innerHTML =
+    perm(!I.inDay, "נסיעה ללא ליווי ביום") +
+    perm(!I.inNight, "נסיעה ללא ליווי בלילה") +
+    perm(!I.under21 || !I.isNew, S.birth ? "הסעת יותר משני נוסעים" : "הסעת יותר משני נוסעים <span class='small muted'>(הזינו תאריך לידה)</span>") +
+    perm(!I.isNew, "נהיגה בלי שלט \"נהג חדש\"");
+
+  $("#dates").innerHTML = [
+    ["הנפקת רישיון", I.lic],
+    ["סיום מלווה יום", I.dayEnd],
+    ["סיום מלווה לילה", I.nightEnd],
+    ["סיום תקופת נהג חדש", I.newEnd],
+  ].map(([k, d]) => `<div class="li plain"><div class="grow">${k}</div><div class="val">${fmtD(d)}</div></div>`).join("");
+
+  renderLive(now);
+}
+
+function renderLive(now = new Date()) {
+  const live = S.live;
+  $("#liveIdle").classList.toggle("hidden", !!live);
+  $("#liveRun").classList.toggle("hidden", !live);
+  if (live) {
+    const st = new Date(live.start), sec = Math.max(0, Math.floor((now - st) / 1000));
+    $("#liveTimer").textContent = `${pad(Math.floor(sec / 3600))}:${pad(Math.floor(sec / 60) % 60)}:${pad(sec % 60)}`;
+    $("#liveSince").textContent = `התחלה ב־${hhmm(st)}`;
+  }
+  $("#liveHint").textContent = isNightHour(now) ? "שעות לילה" : "שעות יום";
+}
+
+function renderTrips() {
+  const T = totals();
+  $("#tripsSummary").textContent = T.count
+    ? `${T.count} נסיעות · ${fmtMin(T.total)} עם מלווה · ${fmtMin(T.night)} בלילה`
+    : "";
+  const list = [...S.trips].sort((a, b) => tripStart(b) - tripStart(a));
+  if (!list.length) {
+    $("#tripList").innerHTML = `<div class="empty">עדיין אין נסיעות.<br>הוסיפו נסיעה או התחילו אחת מהמסך הראשי.</div>`;
+    return;
+  }
+  const roads = { urban: "עירונית", intercity: "בין־עירונית", mixed: "משולבת" };
+  $("#tripList").innerHTML = list.map((t) => {
+    const st = tripStart(t), nm = t.acc ? nightMinutes(st, t.dur) : 0;
+    const end = new Date(st.getTime() + t.dur * 60000);
+    return `<button class="trip" data-edit="${t.id}">
+      <div class="when">
+        <b>${fmtD(st)} · <span dir="ltr">${hhmm(st)}–${hhmm(end)}</span></b>
+        <div>
+          <span class="chip">${roads[t.road] || ""}</span>
+          ${t.acc ? `<span class="chip">${esc(t.comp || "מלווה")}</span>` : `<span class="chip solo">לבד</span>`}
+          ${nm >= 1 ? `<span class="chip night">לילה ${fmtMin(nm)}</span>` : ""}
+        </div>
+        ${t.note ? `<div class="small muted" style="margin-top:5px">${esc(t.note)}</div>` : ""}
+      </div>
+      <div class="dur">${fmtMin(t.dur)}</div>${IC.chev}
+    </button>`;
+  }).join("");
+}
+
+function render() { renderHome(); renderTrips(); }
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+/* ---------- tabs ---------- */
+const TITLES = { home: "נהג חדש", trips: "יומן נסיעות", rules: "החוק בקצרה", settings: "פרופיל" };
+function go(tab) {
+  Object.keys(TITLES).forEach((t) => $("#tab-" + t).classList.toggle("hidden", t !== tab));
+  $$(".tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.tab === tab));
+  $("#hdrTitle").textContent = TITLES[tab];
+  if (tab === "settings") fillSettings();
+  window.scrollTo(0, 0);
+}
+$$(".tabbar button").forEach((b) => b.addEventListener("click", () => go(b.dataset.tab)));
+$$("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go)));
+
+/* ---------- toast ---------- */
+let toastT;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+function ask(msg, okLabel) {
+  return new Promise((res) => {
+    $("#askMsg").textContent = msg; $("#askOk").textContent = okLabel || "אישור";
+    $("#ask").classList.remove("hidden");
+    const done = (v) => { $("#ask").classList.add("hidden"); res(v); };
+    $("#askOk").onclick = () => done(true); $("#askNo").onclick = () => done(false);
+  });
+}
+
+/* ---------- trip editor ---------- */
+let editId = null, fRoad = "urban", fAcc = 1;
+function setSeg(id, v) { $$(`#${id} button`).forEach((b) => b.classList.toggle("on", b.dataset.v === String(v))); }
+[["fRoad", (v) => (fRoad = v)], ["fAcc", (v) => { fAcc = +v; $("#fCompWrap").classList.toggle("hidden", !fAcc); }]].forEach(([id, fn]) =>
+  $$(`#${id} button`).forEach((b) => b.addEventListener("click", () => { fn(b.dataset.v); setSeg(id, b.dataset.v); preview(); })));
+$("#durQuick").innerHTML = [15, 30, 45, 60, 90, 120].map((m) => `<button type="button" class="btn secondary sm" data-m="${m}">${fmtMin(m)}</button>`).join("");
+$$("#durQuick button").forEach((b) => b.addEventListener("click", () => { $("#fDur").value = b.dataset.m; preview(); }));
+["#fDate", "#fStart", "#fDur"].forEach((s) => $(s).addEventListener("input", preview));
+
+function lastComp() { const t = [...S.trips].reverse().find((x) => x.acc && x.comp); return t ? t.comp : ""; }
+
+function openSheet(trip, prefill) {
+  editId = trip ? trip.id : null;
+  const now = new Date();
+  const p = trip || prefill || {};
+  $("#sheetTitle").textContent = trip ? "עריכת נסיעה" : "נסיעה חדשה";
+  $("#fDate").value = p.date || isoD(now);
+  $("#fStart").value = p.start || hhmm(new Date(now.getTime() - 30 * 60000));
+  $("#fDur").value = p.dur || "";
+  fRoad = p.road || "urban"; setSeg("fRoad", fRoad);
+  const I = info(now);
+  fAcc = p.acc != null ? +p.acc : (I && !I.inNight ? 0 : 1); setSeg("fAcc", fAcc);
+  $("#fCompWrap").classList.toggle("hidden", !fAcc);
+  $("#fComp").value = p.comp != null ? p.comp : lastComp();
+  $("#fNote").value = p.note || "";
+  $("#fDelete").classList.toggle("hidden", !trip);
+  $("#compList").innerHTML = [...new Set(S.trips.map((t) => t.comp).filter(Boolean))].map((c) => `<option value="${esc(c)}">`).join("");
+  $("#sheet").classList.remove("hidden");
+  preview();
+}
+function closeSheet() { $("#sheet").classList.add("hidden"); }
+$("#sheetClose").addEventListener("click", closeSheet);
+$("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
+$("#hdrAdd").addEventListener("click", () => openSheet());
+$("#tripsAdd").addEventListener("click", () => openSheet());
+$("#tripList").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-edit]"); if (!b) return;
+  openSheet(S.trips.find((t) => t.id === b.dataset.edit));
+});
+
+function preview() {
+  const dur = +$("#fDur").value, out = $("#fPreview");
+  if (!$("#fDate").value || !$("#fStart").value || !(dur > 0)) { out.textContent = ""; return; }
+  const st = tripStart({ date: $("#fDate").value, start: $("#fStart").value });
+  const end = new Date(st.getTime() + dur * 60000), nm = nightMinutes(st, dur);
+  let msg = `<span dir="ltr">${hhmm(st)}–${hhmm(end)}</span> · ${fmtMin(dur)}` + (nm >= 1 ? ` · ${fmtMin(nm)} בשעות לילה` : "");
+  const I = info(st);
+  if (!fAcc && I && I.young && (I.inDay || (I.inNight && nm >= 1)))
+    msg += `<br><span style="color:var(--red-t);font-weight:600">בזמן הזה הייתה חובה לנסוע עם מלווה</span>`;
+  out.innerHTML = msg;
+}
+
+$("#fSave").addEventListener("click", () => {
+  const dur = Math.round(+$("#fDur").value);
+  if (!$("#fDate").value || !$("#fStart").value) return toast("חסר תאריך או שעה");
+  if (!(dur > 0) || dur > 1440) return toast("הזינו משך נסיעה בדקות");
+  const t = {
+    id: editId || (Date.now().toString(36) + Math.random().toString(36).slice(2, 6)),
+    date: $("#fDate").value, start: $("#fStart").value, dur, road: fRoad, acc: fAcc,
+    comp: fAcc ? $("#fComp").value.trim() : "", note: $("#fNote").value.trim(),
+  };
+  const i = S.trips.findIndex((x) => x.id === t.id);
+  if (i >= 0) S.trips[i] = t; else S.trips.push(t);
+  save(); closeSheet(); render(); toast(i >= 0 ? "הנסיעה עודכנה" : "הנסיעה נשמרה");
+});
+$("#fDelete").addEventListener("click", async () => {
+  if (!(await ask("למחוק את הנסיעה?", "מחיקה"))) return;
+  S.trips = S.trips.filter((t) => t.id !== editId);
+  save(); closeSheet(); render(); toast("נמחק");
+});
+
+/* ---------- live trip ---------- */
+$("#liveStart").addEventListener("click", () => { S.live = { start: Date.now() }; save(); renderLive(); toast("נסיעה טובה!"); });
+$("#liveCancel").addEventListener("click", async () => { if (!(await ask("לבטל את הנסיעה בלי לשמור?", "ביטול נסיעה"))) return; S.live = null; save(); renderLive(); });
+$("#liveStop").addEventListener("click", () => {
+  const st = new Date(S.live.start), dur = Math.max(1, Math.round((Date.now() - st) / 60000));
+  S.live = null; save(); renderLive();
+  openSheet(null, { date: isoD(st), start: hhmm(st), dur });
+});
+setInterval(() => { tickCountdown(); if (S.live) renderLive(); }, 1000);
+setInterval(renderHome, 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
+
+/* ---------- accompanier checker ---------- */
+function chk() {
+  const a = +$("#chkAge").value, y = +$("#chkYears").value, out = $("#chkOut");
+  if (!$("#chkAge").value || !$("#chkYears").value) { out.textContent = ""; return; }
+  const ok = (a >= 24 && y >= 5) || (a >= 30 && y >= 3);
+  out.style.color = ok ? "var(--green-t)" : "var(--red-t)";
+  out.textContent = ok ? "יכול/ה ללוות" : "לא עומד/ת בתנאים (24+ עם 5 שנות רישיון, או 30+ עם 3 שנים)";
+}
+$("#chkAge").addEventListener("input", chk); $("#chkYears").addEventListener("input", chk);
+
+/* ---------- settings ---------- */
+function fillSettings() {
+  $("#setName").value = S.name; $("#setLicense").value = S.license; $("#setBirth").value = S.birth; $("#setDeclared").checked = !!S.declared;
+}
+$("#setSave").addEventListener("click", () => {
+  if (!$("#setLicense").value) return toast("הזינו תאריך רישיון");
+  S.name = $("#setName").value.trim(); S.license = $("#setLicense").value; S.birth = $("#setBirth").value; S.declared = $("#setDeclared").checked;
+  save(); render(); go("home"); toast("נשמר");
+});
+$("#exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `melave-backup-${isoD(new Date())}.json`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$("#importBtn").addEventListener("click", () => $("#importFile").click());
+function restore(text) {
+  try {
+    const d = JSON.parse(text);
+    if (!d || !Array.isArray(d.trips)) throw 0;
+    S = Object.assign(blank(), d); save(); render(); fillSettings(); toast("הנתונים שוחזרו"); return true;
+  } catch { toast("גיבוי לא תקין"); return false; }
+}
+$("#importFile").addEventListener("change", async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  restore(await f.text()); e.target.value = "";
+});
+$("#copyBtn").addEventListener("click", async () => {
+  const txt = JSON.stringify(S);
+  try { await navigator.clipboard.writeText(txt); toast("הגיבוי הועתק"); }
+  catch { const b = $("#pasteBox"); b.value = txt; b.focus(); b.select(); toast("סמנו והעתיקו את הטקסט"); }
+});
+$("#pasteBtn").addEventListener("click", () => {
+  if (!$("#pasteBox").value.trim()) return toast("הדביקו קודם טקסט גיבוי");
+  if (restore($("#pasteBox").value)) $("#pasteBox").value = "";
+});
+$("#resetBtn").addEventListener("click", async () => {
+  if (!(await ask("למחוק את כל הנתונים והנסיעות? אי אפשר לבטל.", "מחיקה"))) return;
+  S = blank(); save(); render(); fillSettings(); toast("הכל נמחק");
+});
+
+render();
+if (!S.license) go("settings");
+})();
+</script>
+</body>
+</html>
